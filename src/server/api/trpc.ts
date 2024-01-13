@@ -29,7 +29,7 @@ import { type Geo } from "@/app/api/trpc/[trpc]/route";
  */
 export const createTRPCContext = async (opts: {
   headers: Headers;
-  geolocation: Geo;
+  geolocation?: Geo;
 }) => {
   const session = await getServerAuthSession();
 
