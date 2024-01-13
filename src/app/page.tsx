@@ -1,8 +1,8 @@
 import Link from "next/link";
 
-import { CreatePost } from "@/app/_components/create-post";
 import { getServerAuthSession } from "@/server/auth";
 import { api } from "@/trpc/server";
+import { Button } from "@/lib/ui/button";
 
 export default async function Home() {
   const hello = await api.post.hello.query({ text: "from tRPC" });
@@ -47,6 +47,7 @@ export default async function Home() {
             <p className="text-center text-2xl text-white">
               {session && <span>Logged in as {session.user?.name}</span>}
             </p>
+            <Button>hello</Button>
             <Link
               href={session ? "/api/auth/signout" : "/api/auth/signin"}
               className="rounded-full bg-white/10 px-10 py-3 font-semibold no-underline transition hover:bg-white/20"
@@ -75,8 +76,6 @@ async function CrudShowcase() {
       ) : (
         <p>You have no posts yet.</p>
       )}
-
-      <CreatePost />
     </div>
   );
 }
