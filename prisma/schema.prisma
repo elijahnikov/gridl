@@ -44,9 +44,11 @@ model User {
 
     createdAt DateTime @default(now())
 
-    accounts Account[]
-    sessions Session[]
-    grids    Grid[]
+    accounts       Account[]
+    sessions       Session[]
+    grids          Grid[]
+    gridClicks     GridClick[]
+    gridItemClicks GridItemClick[]
 }
 
 model VerificationToken {
@@ -73,6 +75,7 @@ model Grid {
     updatedAt DateTime @updatedAt
 
     gridItems GridItem[]
+    clicks    GridClick[]
 }
 
 model GridItem {
@@ -88,6 +91,65 @@ model GridItem {
     w       Int     @default(0)
     h       Int     @default(0)
 
+    gridId     String
+    grid       Grid            @relation(fields: [gridId], references: [id])
+    itemClicks GridItemClick[]
+}
+
+model GridClick {
+    id String @id @default(cuid())
+
+    country String?
+    flag    String?
+    city    String?
+
+    deviceType   String?
+    deviceModel  String?
+    deviceVendor String?
+
+    os        String?
+    osVersion String?
+
+    isBot Boolean @default(false)
+
+    browser        String?
+    browserVersion String?
+
+    createdAt DateTime @default(now())
+    updateAd  DateTime @updatedAt
+
     gridId String
     grid   Grid   @relation(fields: [gridId], references: [id])
+
+    userId String
+    user   User   @relation(fields: [userId], references: [id])
+}
+
+model GridItemClick {
+    id String @id @default(cuid())
+
+    country String?
+    flag    String?
+    city    String?
+
+    deviceType   String?
+    deviceModel  String?
+    deviceVendor String?
+
+    os        String?
+    osVersion String?
+
+    isBot Boolean @default(false)
+
+    browser        String?
+    browserVersion String?
+
+    createdAt DateTime @default(now())
+    updateAd  DateTime @updatedAt
+
+    gridItemId String
+    gridItem   GridItem @relation(fields: [gridItemId], references: [id])
+
+    userId String
+    user   User   @relation(fields: [userId], references: [id])
 }
