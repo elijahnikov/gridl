@@ -7,18 +7,6 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
-model Post {
-    id        Int      @id @default(autoincrement())
-    name      String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-
-    createdBy   User   @relation(fields: [createdById], references: [id])
-    createdById String
-
-    @@index([name])
-}
-
 // Necessary for Next auth
 model Account {
     id                String  @id @default(cuid())
@@ -56,9 +44,11 @@ model User {
 
     createdAt DateTime @default(now())
 
-    accounts Account[]
-    sessions Session[]
-    posts    Post[]
+    accounts       Account[]
+    sessions       Session[]
+    grids          Grid[]
+    gridClicks     GridClick[]
+    gridItemClicks GridItemClick[]
 }
 
 model VerificationToken {
@@ -67,4 +57,99 @@ model VerificationToken {
     expires    DateTime
 
     @@unique([identifier, token])
+}
+
+model Grid {
+    id String @id @default(cuid())
+
+    name       String
+    default    Boolean @default(false)
+    bgColor    String?
+    bgImageUrl String?
+    columns    Int
+
+    userId String
+    user   User   @relation(fields: [userId], references: [id])
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    gridItems GridItem[]
+    clicks    GridClick[]
+}
+
+model GridItem {
+    id String @id @default(cuid())
+
+    type    String
+    slug    String
+    url     String?
+    text    String?
+    bgColor String?
+    x       Int     @default(0)
+    y       Int     @default(0)
+    w       Int     @default(0)
+    h       Int     @default(0)
+
+    gridId     String
+    grid       Grid            @relation(fields: [gridId], references: [id])
+    itemClicks GridItemClick[]
+}
+
+model GridClick {
+    id String @id @default(cuid())
+
+    country String?
+    flag    String?
+    city    String?
+
+    deviceType   String?
+    deviceModel  String?
+    deviceVendor String?
+
+    os        String?
+    osVersion String?
+
+    isBot Boolean @default(false)
+
+    browser        String?
+    browserVersion String?
+
+    createdAt DateTime @default(now())
+    updateAd  DateTime @updatedAt
+
+    gridId String
+    grid   Grid   @relation(fields: [gridId], references: [id])
+
+    userId String
+    user   User   @relation(fields: [userId], references: [id])
+}
+
+model GridItemClick {
+    id String @id @default(cuid())
+
+    country String?
+    flag    String?
+    city    String?
+
+    deviceType   String?
+    deviceModel  String?
+    deviceVendor String?
+
+    os        String?
+    osVersion String?
+
+    isBot Boolean @default(false)
+
+    browser        String?
+    browserVersion String?
+
+    createdAt DateTime @default(now())
+    updateAd  DateTime @updatedAt
+
+    gridItemId String
+    gridItem   GridItem @relation(fields: [gridItemId], references: [id])
+
+    userId String
+    user   User   @relation(fields: [userId], references: [id])
 }

@@ -1,3 +1,5 @@
+"use client";
+
 import { useSession } from "next-auth/react";
 import Nav from "./nav";
 import Profile from "./profile";

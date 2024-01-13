@@ -13,6 +13,7 @@ import { ZodError } from "zod";
 
 import { getServerAuthSession } from "@/server/auth";
 import { db } from "@/server/db";
+import { UserAgent, type Geo } from "@/app/api/trpc/[trpc]/route";
 
 /**
  * 1. CONTEXT
@@ -26,7 +27,11 @@ import { db } from "@/server/db";
  *
  * @see https://trpc.io/docs/server/context
  */
-export const createTRPCContext = async (opts: { headers: Headers }) => {
+export const createTRPCContext = async (opts: {
+  headers: Headers;
+  geolocation?: Geo;
+  userAgent?: UserAgent;
+}) => {
   const session = await getServerAuthSession();
 
   return {
