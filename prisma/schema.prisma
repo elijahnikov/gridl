@@ -48,11 +48,11 @@ model Session {
 
 model User {
     id            String    @id @default(cuid())
-    name          String?
+    name          String?   @unique
     email         String?   @unique
     password      String?
     emailVerified DateTime?
-    image         String?
+    image         String    @default("https://notion-avatar.vercel.app/api/img/eyJmYWNlIjo1LCJub3NlIjozLCJtb3V0aCI6MiwiZXllcyI6MCwiZXllYnJvd3MiOjEyLCJnbGFzc2VzIjowLCJoYWlyIjowLCJhY2Nlc3NvcmllcyI6MCwiZGV0YWlscyI6MCwiYmVhcmQiOjAsImZsaXAiOjEsImNvbG9yIjoicmdiYSgyNTUsIDAsIDAsIDApIiwic2hhcGUiOiJub25lIn0=")
 
     createdAt DateTime @default(now())
 
