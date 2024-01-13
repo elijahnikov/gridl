@@ -13,6 +13,7 @@ export const authRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       const { email, password } = input;
+
       if (!email || !password) {
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -50,4 +51,9 @@ export const authRouter = createTRPCRouter({
         },
       });
     }),
+  test: publicProcedure.mutation(async ({ ctx }) => {
+    return {
+      geolocation: ctx.geolocation.city,
+    };
+  }),
 });

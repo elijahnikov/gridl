@@ -1,4 +1,5 @@
 "use client";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -35,6 +36,18 @@ import {
 import { type Session } from "next-auth";
 
 export default function Profile({ session }: { session: Session }) {
+  const userAgent = navigator.userAgent;
+  console.log("User Agent:", userAgent);
+
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      console.log("Latitude:", position.coords.latitude);
+      console.log("Longitude:", position.coords.longitude);
+    },
+    (error) => {
+      console.error("Error getting location:", error);
+    },
+  );
   return (
     <>
       <DropdownMenu>

@@ -7,18 +7,6 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
-model Post {
-    id        Int      @id @default(autoincrement())
-    name      String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-
-    createdBy   User   @relation(fields: [createdById], references: [id])
-    createdById String
-
-    @@index([name])
-}
-
 // Necessary for Next auth
 model Account {
     id                String  @id @default(cuid())
@@ -58,7 +46,7 @@ model User {
 
     accounts Account[]
     sessions Session[]
-    posts    Post[]
+    grids    Grid[]
 }
 
 model VerificationToken {
@@ -67,4 +55,39 @@ model VerificationToken {
     expires    DateTime
 
     @@unique([identifier, token])
+}
+
+model Grid {
+    id String @id @default(cuid())
+
+    name       String
+    default    Boolean @default(false)
+    bgColor    String?
+    bgImageUrl String?
+    columns    Int
+
+    userId String
+    user   User   @relation(fields: [userId], references: [id])
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    gridItems GridItem[]
+}
+
+model GridItem {
+    id String @id @default(cuid())
+
+    type    String
+    slug    String
+    url     String?
+    text    String?
+    bgColor String?
+    x       Int     @default(0)
+    y       Int     @default(0)
+    w       Int     @default(0)
+    h       Int     @default(0)
+
+    gridId String
+    grid   Grid   @relation(fields: [gridId], references: [id])
 }
