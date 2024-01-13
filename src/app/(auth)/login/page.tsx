@@ -1,4 +1,3 @@
-import { SymbolLogo } from "@/components/common/logo";
 import LoginRegisterHeader from "@/components/pages/login/header";
 import LoginButton from "@/components/pages/login/login-button";
 import LoginForm from "@/components/pages/login/login-form";
