@@ -44,33 +44,37 @@ export default function LoginButton() {
 
   return (
     <div className="flex flex-col space-y-2">
-      {providers
-        ? Object.keys(providers)
-            .filter((p) => p !== "credentials")
-            .map((providerKey, index) => (
-              <Button
-                key={index}
-                disabled={loading}
-                onClick={() => {
-                  setLoading(true);
-                  void signIn(providerKey, { callbackUrl: "/" });
-                }}
-                variant={"outline"}
-                className="w-full"
-              >
-                {loading ? (
-                  <LoadingSpinner />
-                ) : (
-                  <>
-                    <IconBase className="mr-2">
-                      {logoMap[providerKey as keyof typeof logoMap]}
-                    </IconBase>
-                    Sign in with {providers[providerKey]?.name}
-                  </>
-                )}
-              </Button>
-            ))
-        : null}
+      {providers ? (
+        Object.keys(providers)
+          .filter((p) => p !== "credentials")
+          .map((providerKey, index) => (
+            <Button
+              key={index}
+              disabled={loading}
+              onClick={() => {
+                setLoading(true);
+                void signIn(providerKey, { callbackUrl: "/" });
+              }}
+              variant={"outline"}
+              className="w-full"
+            >
+              {loading ? (
+                <LoadingSpinner />
+              ) : (
+                <>
+                  <IconBase className="mr-2">
+                    {logoMap[providerKey as keyof typeof logoMap]}
+                  </IconBase>
+                  Sign in with {providers[providerKey]?.name}
+                </>
+              )}
+            </Button>
+          ))
+      ) : (
+        <div className="mx-auto flex">
+          <LoadingSpinner />
+        </div>
+      )}
     </div>
   );
 }

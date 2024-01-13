@@ -14,6 +14,7 @@ import { env } from "@/env";
 import { db } from "@/server/db";
 import bcrypt from "bcrypt";
 import { type User } from "@prisma/client";
+import { createId } from "@paralleldrive/cuid2";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -80,6 +81,14 @@ export const authOptions: NextAuthOptions = {
     GoogleProvider({
       clientId: env.GOOGLE_CLIENT_ID,
       clientSecret: env.GOOGLE_CLIENT_SECRET,
+      profile(profile: { email: string; picture: string }) {
+        return {
+          id: createId(),
+          name: profile.email.split("@")[0],
+          email: profile.email,
+          image: profile.picture,
+        };
+      },
     }),
     CredentialsProvider({
       name: "credentials",
@@ -91,7 +100,7 @@ export const authOptions: NextAuthOptions = {
         },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials) {
+      async authorize(credentials, req) {
         if (!credentials?.email || !credentials.password) {
           return null;
         }

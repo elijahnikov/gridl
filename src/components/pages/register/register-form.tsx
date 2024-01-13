@@ -13,25 +13,34 @@ import {
   FormLabel,
   FormMessage,
 } from "@/lib/ui/form";
-import { signIn } from "next-auth/react";
+import { api } from "@/trpc/react";
 
-const formSchema = z.object({
-  email: z.string().email({
-    message: "Please enter a valid e-mail.",
-  }),
-  password: z.string(),
-});
+const formSchema = z
+  .object({
+    email: z.string().email({
+      message: "Please enter a valid e-mail.",
+    }),
+    password: z.string(),
+    confirm: z.string(),
+  })
+  .refine((data) => data.password === data.confirm, {
+    message: "Passwords do not match.",
+    path: ["confirm"],
+  });
 
-export default function LoginForm() {
+export default function RegisterForm() {
+  const { mutate, error } = api.auth.register.useMutation({
+    onError: (data) =>
+      form.setError("email", { type: "manual", message: data.message }),
+  });
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-    void signIn("credentials", {
-      ...values,
-      callbackUrl: "/",
+    mutate({
+      email: values.email,
+      password: values.password,
     });
   }
 
@@ -52,12 +61,30 @@ export default function LoginForm() {
               </FormItem>
             )}
           />
+          {error && (
+            <span className="mb-8 text-red-500">
+              {error.data?.zodError?.fieldErrors.title}
+            </span>
+          )}
           <FormField
             control={form.control}
             name="password"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Password</FormLabel>
+                <FormControl>
+                  <Input placeholder="Password" type="password" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="confirm"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Confirm Password</FormLabel>
                 <FormControl>
                   <Input placeholder="Password" type="password" {...field} />
                 </FormControl>
