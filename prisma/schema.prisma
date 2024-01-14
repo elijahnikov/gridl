@@ -63,6 +63,7 @@ model Grid {
     id String @id @default(cuid())
 
     name       String
+    slug       String
     default    Boolean @default(false)
     bgColor    String?
     bgImageUrl String?
