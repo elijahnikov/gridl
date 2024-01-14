@@ -3,6 +3,7 @@
 import Layout from "@/components/common/page-layout";
 import { SessionProvider } from "next-auth/react";
 import { usePathname } from "next/navigation";
+import { Toaster } from "@/lib/ui/sonner";
 
 const ignorePathnames = ["/login", "/register"];
 
@@ -15,6 +16,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       ) : (
         <Layout>{children}</Layout>
       )}
+      <Toaster richColors theme="light" />
     </SessionProvider>
   );
 }
