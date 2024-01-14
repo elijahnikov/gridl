@@ -16,7 +16,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       ) : (
         <Layout>{children}</Layout>
       )}
-      <Toaster />
+      <Toaster richColors theme="light" />
     </SessionProvider>
   );
 }

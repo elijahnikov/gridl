@@ -22,7 +22,23 @@ export const gridRouter = createTRPCRouter({
       const userId = ctx.session.user.id;
 
       const { success } = await ratelimit.limit("createGrid");
-      if (!success) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
+      if (!success)
+        throw new TRPCError({
+          code: "TOO_MANY_REQUESTS",
+          message: "You are doing that too often. Please try again later.",
+        });
+
+      const slugExists = await ctx.db.grid.findFirst({
+        where: {
+          slug: input.slug,
+        },
+      });
+      if (slugExists) {
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "Slug already exists, please try with a different slug.",
+        });
+      }
 
       return await ctx.db.grid.create({
         data: {

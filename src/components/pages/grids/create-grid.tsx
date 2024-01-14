@@ -30,15 +30,22 @@ import { Controller, useForm } from "react-hook-form";
 import { type z } from "zod";
 import { toast } from "sonner";
 import { DialogDescription } from "@radix-ui/react-dialog";
+import { useState } from "react";
 
 const formSchema = createGridSchema;
 
 export default function CreateGrid() {
+  const [open, setOpen] = useState<boolean>(false);
+
   const trpcUtils = api.useUtils();
   const { mutate } = api.grid.createGrid.useMutation({
-    onSuccess: () => {
+    onSuccess() {
       void trpcUtils.grid.grids.invalidate();
-      toast("Successfully created your new grid, redirecting....");
+      toast.success("Successfully created your new grid, redirecting....");
+      setOpen(false);
+    },
+    onError(error) {
+      toast.error(error.message);
     },
   });
 
@@ -52,8 +59,13 @@ export default function CreateGrid() {
     });
   }
 
+  function handleNameInputChange(value: string) {
+    const formattedValue = value.replace(/ /g, "_");
+    form.setValue("slug", formattedValue);
+  }
+
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button>
           Create new grid
@@ -78,7 +90,30 @@ export default function CreateGrid() {
                   <FormItem>
                     <FormLabel>Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="My new grid" {...field} />
+                      <Input
+                        placeholder="My new grid"
+                        {...field}
+                        onChange={(e) => {
+                          field.onChange(e);
+                          handleNameInputChange(e.target.value);
+                        }}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="slug"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Slug</FormLabel>
+                    <FormControl>
+                      <Input
+                        prefix={"gridl.co/"}
+                        placeholder="grid"
+                        {...field}
+                      />
                     </FormControl>
                   </FormItem>
                 )}
