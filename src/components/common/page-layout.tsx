@@ -1,8 +1,6 @@
 "use client";
 
-import { useSession } from "next-auth/react";
 import Nav from "./nav";
-import Profile from "./profile";
 import { cn } from "@/lib/utils";
 
 interface LayoutProps {
@@ -10,17 +8,16 @@ interface LayoutProps {
 }
 
 export default function Layout({ children }: LayoutProps) {
-  const { data: session } = useSession();
   return (
     <div className="flex flex-row flex-col">
       <div className="sticky top-0 z-20">
         <aside className="sticky top-0">
-          <Nav>{session && <Profile session={session} />}</Nav>
+          <Nav />
         </aside>
       </div>
 
-      <main className="mx-auto flex h-full w-full flex-col items-center gap-6 bg-stone-100 px-4 py-8 sm:px-6 sm:pt-10 lg:px-8">
-        <div className={cn("w-[90vw]", "flex flex-col gap-8")}>
+      <main className="mx-auto flex min-h-[85vh] w-full flex-col items-center gap-6 bg-stone-100 px-4 py-8 sm:px-6 sm:pt-9 lg:px-8">
+        <div className={cn("w-[95vw]", "flex flex-col gap-8")}>
           <Container>{children}</Container>
         </div>
       </main>
