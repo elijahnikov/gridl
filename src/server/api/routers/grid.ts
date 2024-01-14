@@ -27,7 +27,6 @@ export const gridRouter = createTRPCRouter({
       return await ctx.db.grid.create({
         data: {
           userId,
-          default: input.setDefault,
           columns: 0,
           ...input,
         },
