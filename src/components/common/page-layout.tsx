@@ -16,10 +16,12 @@ export default function Layout({ children }: LayoutProps) {
         </aside>
       </div>
 
-      <main className="mx-auto flex min-h-[85vh] w-full flex-col items-center gap-6 bg-stone-100 px-4 py-8 sm:px-6 sm:pt-9 lg:px-8">
-        <div className={cn("w-[95vw]", "flex flex-col gap-8")}>
-          <Container>{children}</Container>
-        </div>
+      <main className="mx-auto flex min-h-[92vh] w-full flex-col items-center bg-gray-100 ">
+        <div
+          className="pattern-cross pattern-gray-500 pattern-bg-white 
+  pattern-size-4 pattern-opacity-5 absolute z-0 min-h-[85vh] w-full"
+        />
+        <div className={cn("z-10 w-[100vw]", "flex flex-col")}>{children}</div>
       </main>
     </div>
   );
