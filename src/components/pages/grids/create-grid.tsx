@@ -159,6 +159,7 @@ export default function CreateGrid() {
                         bgColor: "#ffffff",
                         name: "",
                         default: false,
+                        slug: "",
                       })
                     }
                   >

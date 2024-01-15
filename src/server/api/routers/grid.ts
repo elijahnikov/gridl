@@ -4,6 +4,7 @@ import { Redis } from "@upstash/redis/nodejs";
 import { createGridSchema } from "../schemas/grid";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
+import { RouterOutputs } from "@/trpc/shared";
 
 const ratelimit = new Ratelimit({
   redis: Redis.fromEnv(),
@@ -39,6 +40,13 @@ export const gridRouter = createTRPCRouter({
           message: "Slug already exists, please try with a different slug.",
         });
       }
+      if (input.default) {
+        await ctx.db.grid.updateMany({
+          data: {
+            default: false,
+          },
+        });
+      }
 
       return await ctx.db.grid.create({
         data: {
@@ -63,13 +71,14 @@ export const gridRouter = createTRPCRouter({
       orderBy: [
         {
           default: "desc",
-          createdAt: "desc",
         },
+        { createdAt: "desc" },
       ],
       select: {
         name: true,
         createdAt: true,
         bgColor: true,
+        default: true,
         bgImageUrl: true,
         _count: {
           select: {
