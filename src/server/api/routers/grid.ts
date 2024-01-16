@@ -100,12 +100,12 @@ export const gridRouter = createTRPCRouter({
   // READ: Get specific grid by id for editing,
   //
   gridForEditing: protectedProcedure
-    .input(z.object({ id: z.string() }))
+    .input(z.object({ slug: z.string() }))
     .query(async ({ ctx, input }) => {
       const currentUserId = ctx.session.user.id;
       const grid = await ctx.db.grid.findFirst({
         where: {
-          id: input.id,
+          slug: input.slug,
           userId: currentUserId,
         },
         include: {

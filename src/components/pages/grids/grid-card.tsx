@@ -18,7 +18,7 @@ export default function GridCard({
   const noOfItems = grid._count.gridItems;
   return (
     <>
-      <Link href={`/${grid.slug}`}>
+      <Link href={`/project/${grid.slug}`}>
         <div
           className="transform cursor-pointer space-y-[16px] rounded-lg 
     border border-gray-100 bg-white p-2 shadow transition transition-all duration-500 hover:scale-105"
@@ -37,9 +37,10 @@ export default function GridCard({
               )}
             </div>
           </div>
-          <div className="items-center justify-between space-y-3 px-4 pb-4">
+          <div className="items-center justify-between px-4 pb-4">
             <p className="truncate font-semibold text-slate-700">{grid.name}</p>
-            <div className="flex">
+            <p className="text-sm text-slate-500">/{grid.slug}</p>
+            <div className="mt-3 flex">
               <p className="flex w-full text-sm text-slate-500">
                 <MousePointerSquare className="mr-1 mt-[2px]" size={15} />
                 {noOfItems === 1 ? `${noOfItems} item` : `${noOfItems} items`}

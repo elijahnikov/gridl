@@ -11,10 +11,11 @@ import {
 } from "@/lib/ui/dropdown-menu";
 
 import { signOut } from "next-auth/react";
-import Avatar from "./avatar";
+
 import { Settings, LogOut } from "lucide-react";
 import { type Session } from "next-auth";
 import { Skeleton } from "@/lib/ui/skeleton";
+import GridlAvatar from "./avatar";
 
 export default function Profile({
   session,
@@ -33,7 +34,10 @@ export default function Profile({
                 <Skeleton className="h-[40px] w-[40px] rounded-full" />
               )}
               {status === "authenticated" && (
-                <Avatar size={40} url={String(session?.user.image)} />
+                <GridlAvatar
+                  name={String(session.user.name)}
+                  url={String(session?.user.image)}
+                />
               )}
             </div>
           </DropdownMenuTrigger>
