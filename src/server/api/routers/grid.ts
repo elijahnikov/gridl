@@ -4,7 +4,6 @@ import { Redis } from "@upstash/redis/nodejs";
 import { createGridSchema } from "../schemas/grid";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { RouterOutputs } from "@/trpc/shared";
 
 const ratelimit = new Ratelimit({
   redis: Redis.fromEnv(),
@@ -20,7 +19,7 @@ export const gridRouter = createTRPCRouter({
   createGrid: protectedProcedure
     .input(createGridSchema)
     .mutation(async ({ ctx, input }) => {
-      const userId = ctx.session.user.id;
+      const currentUserId = ctx.session.user.id;
 
       const { success } = await ratelimit.limit("createGrid");
       if (!success)
@@ -32,6 +31,7 @@ export const gridRouter = createTRPCRouter({
       const slugExists = await ctx.db.grid.findFirst({
         where: {
           slug: input.slug,
+          userId: currentUserId,
         },
       });
       if (slugExists) {
@@ -50,7 +50,7 @@ export const gridRouter = createTRPCRouter({
 
       return await ctx.db.grid.create({
         data: {
-          userId,
+          userId: currentUserId,
           columns: 0,
           ...input,
         },
@@ -75,8 +75,15 @@ export const gridRouter = createTRPCRouter({
         { createdAt: "desc" },
       ],
       select: {
+        id: true,
+        user: {
+          select: {
+            name: true,
+          },
+        },
         name: true,
         createdAt: true,
+        slug: true,
         bgColor: true,
         default: true,
         bgImageUrl: true,
@@ -99,6 +106,7 @@ export const gridRouter = createTRPCRouter({
       const grid = await ctx.db.grid.findFirst({
         where: {
           id: input.id,
+          userId: currentUserId,
         },
         include: {
           gridItems: true,

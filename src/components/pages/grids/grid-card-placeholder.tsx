@@ -5,7 +5,7 @@ export default function GridCardPlaceholder() {
         <div className="h-20 w-full animate-pulse rounded-md bg-gray-200" />
       </div>
       <div className="items-center justify-between space-y-4 px-4 pb-4">
-        <div className="h-8 w-48 animate-pulse rounded-md bg-gray-200" />
+        <div className="h-6 w-48 animate-pulse rounded-md bg-gray-200" />
         <div className="h-4 w-24 animate-pulse rounded-md bg-gray-200" />
       </div>
     </div>

@@ -31,10 +31,12 @@ import { type z } from "zod";
 import { toast } from "sonner";
 import { DialogDescription } from "@radix-ui/react-dialog";
 import { useState } from "react";
+import { useSession } from "next-auth/react";
 
 const formSchema = createGridSchema;
 
 export default function CreateGrid() {
+  const { data: session } = useSession();
   const [open, setOpen] = useState<boolean>(false);
 
   const trpcUtils = api.useUtils();
@@ -60,7 +62,7 @@ export default function CreateGrid() {
   }
 
   function handleNameInputChange(value: string) {
-    const formattedValue = value.replace(/ /g, "_");
+    const formattedValue = value.replace(/[^\w\s]/g, "").replace(/\s+/g, "_");
     form.setValue("slug", formattedValue);
   }
 
@@ -143,7 +145,11 @@ export default function CreateGrid() {
                     <div className="space-y-1 leading-none">
                       <FormLabel>Set as default?</FormLabel>
                       <FormDescription>
-                        This grid will be shown to users
+                        This grid will be shown to users that navigate to your
+                        default page:{" "}
+                        <span className="font-semibold">
+                          gridl.co/{session?.user.name}
+                        </span>
                       </FormDescription>
                     </div>
                   </FormItem>
