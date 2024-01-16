@@ -1,6 +1,7 @@
 "use client";
 
 import { type RouterOutputs } from "@/trpc/shared";
+import { cellsChoices } from "@/utils/cellsMap";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { type Layouts, Responsive, WidthProvider } from "react-grid-layout";
 import "react-grid-layout/css/styles.css";
@@ -50,8 +51,8 @@ export default function Editor({
           ...grid,
           i: grid.id,
           resizeHandles: ["se", "nw"] as ResizeHandle[],
-          // ...gridItemMap.find((item) => item.type === grid.type)
-          //   ?.layoutItemObject,
+          ...cellsChoices.find((item) => item.type === grid.type)
+            ?.extraLayoutProps,
         };
       }) ?? [];
     setParsedLayout(reshapedLayout);
@@ -97,10 +98,9 @@ export default function Editor({
                     justifyContent: "center",
                   }}
                 >
-                  {/* {gridItemMap
-                            .find((item) => item.type === l.type)
-                            ?.render(l.url!)} */}
-                  test
+                  {cellsChoices
+                    .find((item) => item.type === l.type)
+                    ?.render(l.url!)}
                 </div>
               </div>
             </div>
@@ -109,5 +109,5 @@ export default function Editor({
     );
   }, [ResponsiveGridLayout, layouts, parsedLayout]);
 
-  return <div className="h-[75vh] rounded-md bg-white">{gridEditor}</div>;
+  return <div className="h-[73vh] rounded-md bg-white">{gridEditor}</div>;
 }

@@ -23,6 +23,7 @@ export default function GridProjectPage() {
             <LoadingSpinner size={30} />
           ) : (
             <GridProjectHeader
+              page={"project"}
               name={grid.name}
               slug={grid.slug}
               user={String(session?.user.name)}
