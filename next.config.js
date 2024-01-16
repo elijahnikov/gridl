@@ -11,6 +11,7 @@ const config = {
       { hostname: "cdn.discordapp.com" },
       { hostname: "lh3.googleusercontent.com" },
       { hostname: "illustrations.popsy.co" },
+      { hostname: "notion-avatar.vercel.app" },
     ],
   },
 };

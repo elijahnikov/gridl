@@ -1,19 +1,23 @@
-import Image from "next/image";
+import { Avatar, AvatarFallback, AvatarImage } from "@/lib/ui/avatar";
 
-export default function Avatar({
+export default function GridlAvatar({
   url,
-  size = 50,
+  name,
 }: {
   url: string;
-  size?: number;
+  name: string;
 }) {
+  function getInitials(input: string) {
+    const words = input.split(" ");
+    const initials = words.map((word) => word.charAt(0).toUpperCase());
+    const result = initials.join("");
+    return result;
+  }
+
   return (
-    <Image
-      src={url}
-      alt="Profile picture"
-      width={size}
-      height={size}
-      className="rounded-full"
-    />
+    <Avatar>
+      <AvatarImage src={url} />
+      <AvatarFallback>{getInitials(name)}</AvatarFallback>
+    </Avatar>
   );
 }

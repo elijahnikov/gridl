@@ -10,6 +10,7 @@ import {
   navigationMenuTriggerStyle,
 } from "@/lib/ui/navigation-menu";
 import { cn } from "@/lib/utils";
+import ProjectSelector from "./project-selector";
 
 export default function NavTabs({
   status,
@@ -23,9 +24,10 @@ export default function NavTabs({
   const tabs = useMemo(() => {
     if (slug) {
       return [
-        { name: "Links", href: `/${slug}` },
-        { name: "Analytics", href: `/${slug}/analytics` },
-        { name: "Settings", href: `/${slug}/settings` },
+        { name: "Cells", href: `/project/${slug}` },
+        { name: "Editor", href: `/project/${slug}/editor` },
+        { name: "Analytics", href: `/project/${slug}/analytics` },
+        { name: "Settings", href: `/project/${slug}/settings` },
       ];
     }
     return [
@@ -37,6 +39,7 @@ export default function NavTabs({
   return (
     <>
       <div className="scrollbar-hide mb-[2px] ml-10 flex h-12 items-center justify-start space-x-3">
+        {slug && <ProjectSelector slug={slug} status={status} />}
         {status === "loading" &&
           Array.from({ length: tabs.length }).map((_, i) => (
             <Skeleton key={i} className="h-8 w-[80px] rounded-md bg-gray-200" />
