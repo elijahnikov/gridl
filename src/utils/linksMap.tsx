@@ -18,6 +18,7 @@ import {
   BsTwitter,
   BsYoutube,
 } from "react-icons/bs";
+import { FaSoundcloud } from "react-icons/fa";
 
 export const linkTypes = ["social", "music", "basicLink"] as const;
 type LinkTypesIndex = (typeof linkTypes)[number];
@@ -52,42 +53,42 @@ export const linksRenderMap = [
     slug: "twitter",
     render: (url) => <TwitterEmbed url={url} />,
     name: "Twitter/X",
-    icon: <BsTwitter />,
+    icon: <BsTwitter size={25} />,
   },
   {
     type: "social",
     slug: "tiktok",
     render: (url) => <TikTokEmbed url={url} width={"100%"} />,
     name: "TikTok",
-    icon: <BsTiktok />,
+    icon: <BsTiktok size={25} />,
   },
   {
     type: "social",
     slug: "instagram",
     render: (url) => <InstagramEmbed igVersion="1" url={url} width={"100%"} />,
     name: "Instagram",
-    icon: <BsInstagram />,
+    icon: <BsInstagram size={25} />,
   },
   {
     type: "social",
     slug: "youtube",
     render: (url) => <YouTubeEmbed url={url} width={400} height={200} />,
     name: "YouTube",
-    icon: <BsYoutube />,
+    icon: <BsYoutube size={25} />,
   },
   {
     type: "social",
     slug: "pinterest",
     render: (url) => <PinterestEmbed url={url} />,
     name: "Pinterest",
-    icon: <BsPinterest />,
+    icon: <BsPinterest size={25} />,
   },
   {
     type: "social",
     slug: "linkedin",
     render: (url) => <LinkedInEmbed url={url} width={"100%"} />,
     name: "LinkedIn",
-    icon: <BsLinkedin />,
+    icon: <BsLinkedin size={25} />,
   },
   //
   // MUSIC
@@ -97,17 +98,13 @@ export const linksRenderMap = [
     slug: "spotify",
     render: (url) => <Spotify link={url} />,
     name: "Spotify",
-    icon: <BsSpotify />,
+    icon: <BsSpotify size={25} />,
   },
   {
     type: "music",
     slug: "soundcloud",
     render: (url) => <div>{url}</div>,
     name: "SoundCloud",
-    icon: <p>test</p>,
+    icon: <FaSoundcloud size={25} />,
   },
 ] as Array<LinksRenderMapType>;
-
-export const addLinksRenderMap: Array<
-  Omit<LinksRenderMapType, "render" | "extraLayoutProps">
-> = linksRenderMap.map(({ render: _, extraLayoutProps: __, ...rest }) => rest);

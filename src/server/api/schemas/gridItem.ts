@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 export const createGridItemSchema = z.object({
+  name: z.string().optional(),
   gridSlug: z.string(),
   url: z.string().optional(),
   text: z.string().optional(),
