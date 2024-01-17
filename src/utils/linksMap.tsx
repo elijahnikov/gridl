@@ -35,9 +35,9 @@ const slugTypes = [
 ] as const;
 type SlugTypesIndex = (typeof slugTypes)[number];
 
-type LinksRenderMapType = {
+export type LinksRenderMapType = {
   type: LinkTypesIndex;
-  slug?: SlugTypesIndex;
+  slug: SlugTypesIndex;
   render: (url: string) => React.ReactNode;
   extraLayoutProps?: Partial<ReactGridLayout.Layout>;
   name: string;

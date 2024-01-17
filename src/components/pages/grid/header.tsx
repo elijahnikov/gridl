@@ -22,7 +22,7 @@ export default function GridProjectHeader({
     if (page === "editor") {
       return (
         <div className="flex space-x-4">
-          <AddLink />
+          <AddLink slug={slug} />
           <Button className="w-[180px]">Save</Button>
         </div>
       );

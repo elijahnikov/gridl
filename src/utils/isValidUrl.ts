@@ -1,13 +1,6 @@
+import validUrl from "valid-url";
+
 export default function stringIsValidURL(value: string) {
-  try {
-    new URL(value);
-    return true;
-  } catch (err) {
-    try {
-      new URL("http://" + value);
-      return true;
-    } catch (err) {
-      return false;
-    }
-  }
+  if (!validUrl.isUri(value)) return false;
+  return true;
 }
