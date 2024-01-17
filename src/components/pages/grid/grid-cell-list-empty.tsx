@@ -8,7 +8,7 @@ export default function GridCellListEmpty() {
     <div className="col-span-4 mx-auto mt-[36px] flex w-[75%] flex-col items-center justify-center rounded-md border bg-white py-10 text-center">
       <div>
         <h1 className="text-2xl font-bold text-slate-700">
-          You have not added any cells to your gridl.
+          You have not added any links to your gridl.
         </h1>
         <p className="text-slate-600">
           Create some in the editor and they will show up here!

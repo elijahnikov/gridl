@@ -54,7 +54,6 @@ export const authOptions: NextAuthOptions = {
         token.accessToken = account.access_token;
         token.id = user.id;
         token.name = (user as User).name;
-        console.log({ user });
       }
       return token;
     },
@@ -117,7 +116,6 @@ export const authOptions: NextAuthOptions = {
         if (!passwordMatch) {
           return null;
         }
-        console.log("here1");
 
         return user;
       },

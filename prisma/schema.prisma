@@ -82,15 +82,17 @@ model Grid {
 model GridItem {
     id String @id @default(cuid())
 
-    type    String
-    slug    String
-    url     String?
-    text    String?
-    bgColor String?
-    x       Int     @default(0)
-    y       Int     @default(0)
-    w       Int     @default(0)
-    h       Int     @default(0)
+    name      String?
+    type      String
+    slug      String
+    url       String?
+    text      String?
+    bgColor   String?
+    textColor String?
+    x         Int     @default(0)
+    y         Int     @default(0)
+    w         Int     @default(0)
+    h         Int     @default(0)
 
     gridId     String
     grid       Grid            @relation(fields: [gridId], references: [id])

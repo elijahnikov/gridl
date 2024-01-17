@@ -52,7 +52,6 @@ export const authRouter = createTRPCRouter({
       });
     }),
   test: publicProcedure.mutation(async ({ ctx }) => {
-    console.log(ctx.userAgent);
     return {
       geolocation: ctx.geolocation?.city,
     };
