@@ -22,21 +22,25 @@ export const gridItemRouter = createTRPCRouter({
       const { success } = await ratelimit.limit("createGridItem");
       if (!success) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
 
-      await ctx.db.gridItem.create({
-        data: {
-          ...input,
+      const grid = await ctx.db.grid.findFirst({
+        where: {
+          slug: input.gridSlug,
         },
       });
+      if (grid) {
+        await ctx.db.gridItem.create({
+          data: {
+            gridId: grid.id,
+            ...input,
+          },
+        });
+      }
     }),
   //
   // UPDATE: Update grid item
   //
   updateGridItem: protectedProcedure
-    .input(
-      createGridItemSchema
-        .omit({ gridId: true })
-        .extend({ gridItemId: z.string() }),
-    )
+    .input(createGridItemSchema.extend({ gridItemId: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const { success } = await ratelimit.limit("updateGridItem");
       if (!success) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });

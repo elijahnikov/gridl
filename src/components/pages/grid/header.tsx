@@ -2,6 +2,7 @@ import { Button } from "@/lib/ui/button";
 import { Copy } from "lucide-react";
 import Link from "next/link";
 import { useMemo } from "react";
+import AddLink from "./add-link";
 
 export default function GridProjectHeader({
   name,
@@ -21,7 +22,7 @@ export default function GridProjectHeader({
     if (page === "editor") {
       return (
         <div className="flex space-x-4">
-          <Button variant={"outline"}>Add Cell</Button>
+          <AddLink />
           <Button className="w-[180px]">Save</Button>
         </div>
       );
