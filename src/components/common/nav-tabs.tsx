@@ -24,7 +24,7 @@ export default function NavTabs({
   const tabs = useMemo(() => {
     if (slug) {
       return [
-        { name: "Cells", href: `/project/${slug}` },
+        { name: "Links", href: `/project/${slug}` },
         { name: "Editor", href: `/project/${slug}/editor` },
         { name: "Analytics", href: `/project/${slug}/analytics` },
         { name: "Settings", href: `/project/${slug}/settings` },

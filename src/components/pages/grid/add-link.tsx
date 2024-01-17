@@ -27,7 +27,9 @@ import {
 import { Input } from "@/lib/ui/input";
 import { createGridItemSchema } from "@/server/api/schemas/gridItem";
 import { api } from "@/trpc/react";
+import { addLinksRenderMap, linkTypes } from "@/utils/linksMap";
 import { zodResolver } from "@hookform/resolvers/zod";
+import _ from "lodash";
 
 import { useSession } from "next-auth/react";
 import { useState } from "react";
@@ -65,45 +67,7 @@ export default function AddLink() {
             Your new link will be added to the top left corner of your grid.
           </DialogDescription>
         </DialogHeader>
-        <Accordion type="single" collapsible>
-          <AccordionItem value="item-1">
-            <AccordionTrigger>Social</AccordionTrigger>
-            <AccordionContent>
-              <div className="grid grid-cols-2 gap-4">
-                <Card>
-                  <CardContent className="h-[100px]">hello</CardContent>
-                </Card>
-                <Card>
-                  <CardContent>hello</CardContent>
-                </Card>
-                <Card>
-                  <CardContent className="h-[100px]">hello</CardContent>
-                </Card>
-                <Card>
-                  <CardContent>hello</CardContent>
-                </Card>
-                <Card>
-                  <CardContent className="h-[100px]">hello</CardContent>
-                </Card>
-                <Card>
-                  <CardContent>hello</CardContent>
-                </Card>
-              </div>
-            </AccordionContent>
-          </AccordionItem>
-          <AccordionItem value="item-2">
-            <AccordionTrigger>Music</AccordionTrigger>
-            <AccordionContent>
-              Yes. It adheres to the WAI-ARIA design pattern.
-            </AccordionContent>
-          </AccordionItem>
-          <AccordionItem value="item-3">
-            <AccordionTrigger>Basic Link</AccordionTrigger>
-            <AccordionContent>
-              Yes. It adheres to the WAI-ARIA design pattern.
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
+        <DropdownSection />
         <DialogFooter>
           <div className="mt-5 flex w-full space-x-2">
             <Button
@@ -120,5 +84,34 @@ export default function AddLink() {
         </DialogFooter>
       </DialogContent>
     </Dialog>
+  );
+}
+
+function DropdownSection() {
+  return (
+    <Accordion type="single">
+      {linkTypes.map((type, index) => (
+        <AccordionItem value={type} key={index}>
+          <AccordionTrigger>{_.startCase(type)}</AccordionTrigger>
+          <AccordionContent>
+            <AddLinkSection section={type} />
+          </AccordionContent>
+        </AccordionItem>
+      ))}
+    </Accordion>
+  );
+}
+
+function AddLinkSection({ section }: { section: string }) {
+  return (
+    <>
+      {addLinksRenderMap
+        .filter((link) => link.type === section)
+        .map((lnk, index) => (
+          <Card key={index}>
+            <CardContent>{lnk.name}</CardContent>
+          </Card>
+        ))}
+    </>
   );
 }
