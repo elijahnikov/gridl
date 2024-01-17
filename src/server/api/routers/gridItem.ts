@@ -21,17 +21,17 @@ export const gridItemRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { success } = await ratelimit.limit("createGridItem");
       if (!success) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
-
+      const { gridSlug, ...rest } = input;
       const grid = await ctx.db.grid.findFirst({
         where: {
-          slug: input.gridSlug,
+          slug: gridSlug,
         },
       });
       if (grid) {
         await ctx.db.gridItem.create({
           data: {
             gridId: grid.id,
-            ...input,
+            ...rest,
           },
         });
       }

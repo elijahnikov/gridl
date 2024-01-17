@@ -2,7 +2,7 @@
 
 import { type RouterOutputs } from "@/trpc/shared";
 import { linksRenderMap } from "@/utils/linksMap";
-import { useEffect, useMemo, useState } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import { Responsive, WidthProvider } from "react-grid-layout";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
@@ -20,11 +20,7 @@ type LayoutType = {
 
 type ResizeHandle = "s" | "w" | "e" | "n" | "sw" | "nw" | "se" | "ne";
 
-export default function Editor({
-  data,
-}: {
-  data: RouterOutputs["grid"]["gridForEditing"];
-}) {
+function Editor({ data }: { data: RouterOutputs["grid"]["gridForEditing"] }) {
   const ResponsiveGridLayout = WidthProvider(Responsive);
 
   const [backgroundColor, setBackgroundColor] = useState<string>("");
@@ -111,3 +107,5 @@ export default function Editor({
 
   return <div className="h-[73vh] rounded-md bg-white">{gridEditor}</div>;
 }
+
+export default memo(Editor);

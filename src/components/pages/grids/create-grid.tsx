@@ -155,29 +155,29 @@ export default function CreateGrid() {
                   </FormItem>
                 )}
               />
+              <DialogFooter>
+                <div className="mt-5 flex w-full space-x-2">
+                  <Button
+                    variant={"secondary"}
+                    type="reset"
+                    onClick={() =>
+                      form.reset({
+                        bgColor: "#ffffff",
+                        name: "",
+                        default: false,
+                        slug: "",
+                      })
+                    }
+                  >
+                    Cancel
+                  </Button>
+                  <Button className=" w-full" type="submit">
+                    Create
+                  </Button>
+                </div>
+              </DialogFooter>
             </form>
           </Form>
-          <DialogFooter>
-            <div className="mt-5 flex w-full space-x-2">
-              <Button
-                variant={"secondary"}
-                type="reset"
-                onClick={() =>
-                  form.reset({
-                    bgColor: "#ffffff",
-                    name: "",
-                    default: false,
-                    slug: "",
-                  })
-                }
-              >
-                Cancel
-              </Button>
-              <Button className=" w-full" type="submit">
-                Create
-              </Button>
-            </div>
-          </DialogFooter>
         </div>
       </DialogContent>
     </Dialog>

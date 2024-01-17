@@ -11,9 +11,16 @@ import { useParams } from "next/navigation";
 export default function GridEditorPage() {
   const { data: session } = useSession();
   const { slug } = useParams() as { slug: string };
-  const { data, isLoading } = api.grid.gridForEditing.useQuery({
-    slug,
-  });
+  const { data, isLoading } = api.grid.gridForEditing.useQuery(
+    {
+      slug,
+    },
+    {
+      refetchInterval: false,
+      refetchOnWindowFocus: false,
+      refetchOnMount: false,
+    },
+  );
 
   return (
     <>

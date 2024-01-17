@@ -51,9 +51,9 @@ export const authRouter = createTRPCRouter({
         },
       });
     }),
-  // test: publicProcedure.mutation(async ({ ctx }) => {
-  //   return {
-  //     geolocation: ctx.geolocation?.city,
-  //   };
-  // }),
+  test: publicProcedure.mutation(async ({ ctx }) => {
+    return {
+      geolocation: ctx.geolocation?.city,
+    };
+  }),
 });
