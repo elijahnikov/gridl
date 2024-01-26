@@ -18,8 +18,8 @@ export default function Layout({ children }: LayoutProps) {
 
       <main className="mx-auto flex min-h-[92vh] w-full flex-col items-center bg-gray-100 ">
         <div
-          className="pattern-cross pattern-gray-500 pattern-bg-white 
-  pattern-size-4 pattern-opacity-5 absolute z-0 min-h-[85vh] w-full"
+          className="pattern-cross absolute z-0 
+  min-h-[85vh] w-full pattern-bg-white pattern-gray-500 pattern-opacity-5 pattern-size-4"
         />
         <div className={cn("z-10 w-[100vw]", "flex flex-col")}>{children}</div>
       </main>

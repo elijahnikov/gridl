@@ -1,12 +1,12 @@
-export default function LoadingSpinner(props: { size?: number }) {
+export default function LoadingSpinner({ size = 16 }: { size?: number }) {
   return (
     <div role="status">
       <svg
         className="animate-spin"
         viewBox="0 0 20 20"
         xmlns="http://www.w3.org/2000/svg"
-        width={props.size ?? 16}
-        height={props.size ?? 16}
+        width={size}
+        height={size}
       >
         <path
           className="fill-current"

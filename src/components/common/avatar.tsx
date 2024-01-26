@@ -8,10 +8,10 @@ export default function GridlAvatar({
   name: string;
 }) {
   function getInitials(input: string) {
-    const words = input.split(" ");
-    const initials = words.map((word) => word.charAt(0).toUpperCase());
-    const result = initials.join("");
-    return result;
+    return input
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase())
+      .join("");
   }
 
   return (

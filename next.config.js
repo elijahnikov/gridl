@@ -12,6 +12,7 @@ const config = {
       { hostname: "lh3.googleusercontent.com" },
       { hostname: "illustrations.popsy.co" },
       { hostname: "notion-avatar.vercel.app" },
+      { hostname: "www.google.com" },
     ],
   },
 };
