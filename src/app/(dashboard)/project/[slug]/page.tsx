@@ -36,7 +36,7 @@ export default function GridProjectPage() {
           {isLoading && <GridCellListPlaceholder />}
           {!isLoading && grid.gridItems.length === 0 && <GridCellListEmpty />}
           {!isLoading && grid.gridItems.length > 0 && (
-            <GridCellList gridItems={grid.gridItems} />
+            <GridCellList slug={slug} gridItems={grid.gridItems} />
           )}
         </div>
       </div>
