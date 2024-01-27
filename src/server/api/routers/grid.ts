@@ -120,6 +120,8 @@ export const gridRouter = createTRPCRouter({
           },
         },
       });
+      if (grid?.userId !== currentUserId)
+        throw new TRPCError({ code: "UNAUTHORIZED" });
       if (!grid) throw new TRPCError({ code: "NOT_FOUND" });
       if (currentUserId !== grid.userId) {
         throw new TRPCError({ code: "UNAUTHORIZED" });

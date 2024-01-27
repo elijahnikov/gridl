@@ -5,7 +5,7 @@ export const createGridItemSchema = z.object({
   gridSlug: z.string(),
   url: z.string().optional(),
   text: z.string().optional(),
-  type: z.enum(["social", "music", "basicLink"]),
+  type: z.string(),
   slug: z.string(),
   bgColor: z.string().optional(),
   textColor: z.string().optional(),
