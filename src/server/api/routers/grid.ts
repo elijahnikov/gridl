@@ -109,7 +109,15 @@ export const gridRouter = createTRPCRouter({
           userId: currentUserId,
         },
         include: {
-          gridItems: true,
+          gridItems: {
+            include: {
+              _count: {
+                select: {
+                  itemClicks: true,
+                },
+              },
+            },
+          },
         },
       });
       if (!grid) throw new TRPCError({ code: "NOT_FOUND" });
