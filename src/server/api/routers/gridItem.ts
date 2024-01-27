@@ -19,12 +19,14 @@ export const gridItemRouter = createTRPCRouter({
   createGridItem: protectedProcedure
     .input(createGridItemSchema)
     .mutation(async ({ ctx, input }) => {
+      const currentUserId = ctx.session.user.id;
       const { success } = await ratelimit.limit("createGridItem");
       if (!success) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
       const { gridSlug, ...rest } = input;
       const grid = await ctx.db.grid.findFirst({
         where: {
           slug: gridSlug,
+          userId: currentUserId,
         },
       });
       if (grid) {

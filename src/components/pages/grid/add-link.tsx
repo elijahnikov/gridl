@@ -26,7 +26,6 @@ import stringIsValidURL from "@/utils/isValidUrl";
 import { type LinksRenderMapType, linksRenderMap } from "@/utils/linksMap";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { useSession } from "next-auth/react";
 import { useEffect, useMemo, useState } from "react";
 import { HexColorPicker } from "react-colorful";
 import {
@@ -88,7 +87,6 @@ export default function AddLink({ slug }: { slug: string }) {
   }, [form, linkComponent, url]);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
     mutate({
       ...values,
     });

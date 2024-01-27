@@ -1,9 +1,9 @@
 "use client";
 
 import LoadingSpinner from "@/components/common/loading-spinner";
-import GridCellList from "@/components/pages/grid/grid-cell-list";
-import GridCellListEmpty from "@/components/pages/grid/grid-cell-list-empty";
-import GridCellListPlaceholder from "@/components/pages/grid/grid-cell-list-placeholder";
+import GridCellList from "@/components/pages/grid/grid-cell-list/grid-cell-list";
+import GridCellListEmpty from "@/components/pages/grid/grid-cell-list/grid-cell-list-empty";
+import GridCellListPlaceholder from "@/components/pages/grid/grid-cell-list/grid-cell-list-placeholder";
 import GridProjectHeader from "@/components/pages/grid/header";
 import { getGridBySlug } from "@/utils/getGrids";
 import { useSession } from "next-auth/react";
