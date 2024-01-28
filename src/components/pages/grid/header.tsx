@@ -48,11 +48,9 @@ export default function GridProjectHeader({
   }, [page, slug, user]);
 
   return (
-    <>
-      <h1 className="bg-white px-2 text-2xl font-semibold text-slate-700">
-        {name}
-      </h1>
+    <div className="flex w-full justify-between">
+      <h1 className="px-2 text-2xl font-semibold text-slate-700">{name}</h1>
       {secondary}
-    </>
+    </div>
   );
 }
