@@ -16,9 +16,9 @@ export default function GridProjectPage() {
   const { data, isLoading } = getGridBySlug(slug);
   const grid = data!;
   return (
-    <>
+    <div className="w-full">
       <div className="z-10 flex h-20 w-full border-b bg-white">
-        <div className="flex w-full items-center justify-between px-[200px] ">
+        <div className="flex w-full items-center justify-between px-[20px] sm:px-[80px] lg:px-[200px]">
           {isLoading ? (
             <LoadingSpinner size={30} />
           ) : (
@@ -32,7 +32,7 @@ export default function GridProjectPage() {
         </div>
       </div>
       <div className="w-full">
-        <div className="my-10 px-[200px]">
+        <div className="my-10 px-[20px] sm:px-[80px] lg:px-[200px]">
           {isLoading && <GridCellListPlaceholder />}
           {!isLoading && grid.gridItems.length === 0 && <GridCellListEmpty />}
           {!isLoading && grid.gridItems.length > 0 && (
@@ -40,6 +40,6 @@ export default function GridProjectPage() {
           )}
         </div>
       </div>
-    </>
+    </div>
   );
 }
