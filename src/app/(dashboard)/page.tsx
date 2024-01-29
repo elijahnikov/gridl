@@ -19,7 +19,8 @@ export default function Home() {
           </div>
         </div>
       </div>
-      {JSON.stringify(test)}
+      {JSON.stringify(test?.geo)}
+      {JSON.stringify(test?.ip)}
       <div className="w-full">
         <div className="my-10 grid grid-cols-2 gap-5 px-[20px] sm:px-[100px] lg:grid-cols-2 lg:px-[200px] xl:grid-cols-4">
           <GridList />

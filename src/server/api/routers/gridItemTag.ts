@@ -32,8 +32,11 @@ export const gridItemTagRouter = createTRPCRouter({
     // if (!currentUserId) {
     //   throw new TRPCError({ code: "UNAUTHORIZED" });
     // }
+    const ip = (ctx.req?.headers.get("x-forwarded-for") ?? "127.0.0.1").split(
+      ",",
+    )[0];
     return {
-      ip: ctx.req?.ip,
+      ip,
       geo: ctx.geolocation,
     };
     // const tags = await ctx.db.gridItemTag.findMany({
