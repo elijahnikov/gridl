@@ -49,6 +49,7 @@ const createContext = async (req: NextRequest, geolocation: Geo) => {
     headers: req.headers,
     geolocation,
     userAgent: userAgent(req),
+    req,
   });
 };
 

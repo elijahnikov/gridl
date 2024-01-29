@@ -3,7 +3,6 @@ import { type GridCell } from "./grid-cell-list";
 import Favicon from "@/components/common/favicon";
 import { Badge } from "@/lib/ui/badge";
 import { format } from "date-fns";
-import { Dot, LinkIcon } from "lucide-react";
 import { kFormatter } from "@/lib/utils";
 import ListActionMenu from "./list-action-menu";
 

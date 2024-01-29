@@ -49,6 +49,7 @@ model User {
     grids          Grid[]
     gridClicks     GridClick[]
     gridItemClicks GridItemClick[]
+    gridItemTags   GridItemTag[]
 }
 
 model VerificationToken {
@@ -97,6 +98,7 @@ model GridItem {
     gridId     String
     grid       Grid            @relation(fields: [gridId], references: [id])
     itemClicks GridItemClick[]
+    tags       GridItemTag[]
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
@@ -158,4 +160,18 @@ model GridItemClick {
 
     userId String
     user   User   @relation(fields: [userId], references: [id])
+}
+
+model GridItemTag {
+    id String @id @default(cuid())
+
+    text    String
+    bgColor String
+
+    gridItemId String?
+    GridItem   GridItem? @relation(fields: [gridItemId], references: [id])
+    User       User?     @relation(fields: [userId], references: [id])
+    userId     String?
+
+    createdAt DateTime @default(now())
 }
