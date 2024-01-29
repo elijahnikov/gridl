@@ -20,18 +20,23 @@ export const gridItemRouter = createTRPCRouter({
     .input(createGridItemSchema)
     .mutation(async ({ ctx, input }) => {
       const currentUserId = ctx.session.user.id;
+
       const { success } = await ratelimit.limit("createGridItem");
       if (!success) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
-      const { gridSlug, ...rest } = input;
+
+      const { gridSlug, tags, ...rest } = input;
+
       const grid = await ctx.db.grid.findFirst({
         where: {
           slug: gridSlug,
           userId: currentUserId,
         },
       });
+      const tagsString = tags?.map((tag) => tag.value).join(",");
       if (grid) {
         await ctx.db.gridItem.create({
           data: {
+            tags: tagsString,
             gridId: grid.id,
             ...rest,
           },
@@ -50,7 +55,7 @@ export const gridItemRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { success } = await ratelimit.limit("updateGridItem");
       if (!success) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
-      const { gridItemId, ...rest } = input;
+      const { gridItemId, tags, ...rest } = input;
       await ctx.db.gridItem.update({
         where: {
           id: gridItemId,

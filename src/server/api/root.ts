@@ -2,6 +2,7 @@ import { createTRPCRouter } from "@/server/api/trpc";
 import { authRouter } from "./routers/auth";
 import { gridRouter } from "./routers/grid";
 import { gridItemRouter } from "./routers/gridItem";
+import { gridItemTagRouter } from "./routers/gridItemTag";
 
 /**
  * This is the primary router for your server.
@@ -12,6 +13,7 @@ export const appRouter = createTRPCRouter({
   auth: authRouter,
   grid: gridRouter,
   gridItem: gridItemRouter,
+  gridItemTag: gridItemTagRouter,
 });
 
 // export type definition of API

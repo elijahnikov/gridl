@@ -1,5 +1,6 @@
 "use client";
 
+import LoadingSpinner from "@/components/common/loading-spinner";
 import { Button } from "@/lib/ui/button";
 import {
   Dialog,
@@ -10,6 +11,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/lib/ui/dialog";
+import MultipleSelector from "@/lib/ui/fancy-select";
 import {
   Form,
   FormControl,
@@ -19,6 +21,7 @@ import {
 } from "@/lib/ui/form";
 import { Input } from "@/lib/ui/input";
 import { Label } from "@/lib/ui/label";
+
 import { cn } from "@/lib/utils";
 import { createGridItemSchema } from "@/server/api/schemas/gridItem";
 import { api } from "@/trpc/react";
@@ -26,7 +29,7 @@ import stringIsValidURL from "@/utils/isValidUrl";
 import { type LinksRenderMapType, linksRenderMap } from "@/utils/linksMap";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { useEffect, useMemo, useState } from "react";
+import { type RefObject, useEffect, useMemo, useRef, useState } from "react";
 import { HexColorPicker } from "react-colorful";
 import {
   type UseFormReturn,
@@ -53,6 +56,8 @@ export default function AddLink({ slug }: { slug: string }) {
       toast.error(error.message);
     },
   });
+
+  const formRef = useRef<HTMLFormElement>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -97,7 +102,7 @@ export default function AddLink({ slug }: { slug: string }) {
       <DialogTrigger asChild>
         <Button variant={"outline"}>Add Link</Button>
       </DialogTrigger>
-      <DialogContent className="max-h-[95vh] w-[900px] max-w-[900px] overflow-y-auto">
+      <DialogContent className="max-h-[95vh] min-h-[600px] w-[900px] max-w-[900px] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Add link</DialogTitle>
           <DialogDescription className="text-sm text-slate-600">
@@ -106,26 +111,57 @@ export default function AddLink({ slug }: { slug: string }) {
             or through the share button on your desired platform.
           </DialogDescription>
         </DialogHeader>
-        <div>
-          <div className="flex">
-            <InputSection
-              showColorPicker={
-                typeof linkComponent === "undefined" &&
-                form.getValues("url") !== "" &&
-                stringIsValidURL(form.getValues("url")!)
-              }
-              form={form}
-              onSubmit={onSubmit}
-            />
-            <Preview
-              bgColor={bgColor}
-              textColor={textColor}
-              linkComponent={linkComponent}
-              name={name}
-              url={url}
-            />
-          </div>
+
+        <div className="flex flex-1">
+          <InputSection
+            formRef={formRef}
+            showColorPicker={
+              typeof linkComponent === "undefined" &&
+              form.getValues("url") !== "" &&
+              stringIsValidURL(form.getValues("url")!)
+            }
+            form={form}
+            onSubmit={onSubmit}
+          />
+          <Preview
+            bgColor={bgColor}
+            textColor={textColor}
+            linkComponent={linkComponent}
+            name={name}
+            url={url}
+          />
         </div>
+        <DialogFooter>
+          <div className="mt-5 flex w-full space-x-2">
+            <Button
+              variant={"secondary"}
+              type="reset"
+              onClick={() =>
+                form.reset({
+                  url: "",
+                  name: "",
+                  bgColor: "",
+                  textColor: "",
+                })
+              }
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={() => {
+                if (formRef.current) {
+                  formRef.current.dispatchEvent(
+                    new Event("submit", { bubbles: true }),
+                  );
+                }
+              }}
+              className=" w-full"
+              type="submit"
+            >
+              Create
+            </Button>
+          </div>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
@@ -135,90 +171,117 @@ function InputSection({
   form,
   onSubmit,
   showColorPicker,
+  formRef,
 }: {
   form: UseFormReturn<z.infer<typeof formSchema>>;
   onSubmit: (values: z.infer<typeof formSchema>) => void;
   showColorPicker: boolean;
+  formRef: RefObject<HTMLFormElement>;
 }) {
+  const trpcUtils = api.useUtils();
+  const { mutate: tagMutate } = api.gridItemTag.createTag.useMutation({
+    onSuccess: () => {
+      toast.success("Created your tag.");
+      void trpcUtils.gridItemTag.getTags.invalidate();
+    },
+  });
+
+  const { data, isLoading } = api.gridItemTag.getTags.useQuery();
   return (
     <div className="w-[80%] ">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
-          <FormField
-            control={form.control}
-            name="url"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>URL</FormLabel>
-                <FormControl>
-                  <Input placeholder="www.twitter.com" {...field} />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="flex">Name</FormLabel>
-                <FormControl>
-                  <Input placeholder="My new link" {...field} />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-          {showColorPicker && (
-            <div className="flex gap-10">
-              <Controller
+        <form
+          ref={formRef}
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="flex flex-col justify-between space-y-5"
+        >
+          <div className="space-y-5">
+            <FormField
+              control={form.control}
+              name="url"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>URL</FormLabel>
+                  <FormControl>
+                    <Input placeholder="www.twitter.com" {...field} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="flex">Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="My new link" {...field} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            {isLoading ? (
+              <div className="mt-5">
+                <LoadingSpinner size={20} />
+              </div>
+            ) : (
+              <FormField
                 control={form.control}
-                name="bgColor"
-                defaultValue={"#ffffff"}
-                render={({ field: { onChange, value } }) => (
+                name="tags"
+                render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Background Color</FormLabel>
-                    <HexColorPicker color={value} onChange={onChange} />
+                    <FormLabel>Tags</FormLabel>
+                    <FormControl>
+                      <MultipleSelector
+                        creatableCallback={(label) =>
+                          tagMutate({ label, value: label })
+                        }
+                        maxSelected={3}
+                        value={field.value}
+                        onChange={field.onChange}
+                        defaultOptions={data}
+                        placeholder="Tag your links, type a new tag to create it!"
+                        creatable
+                        loadingIndicator={<LoadingSpinner />}
+                        emptyIndicator={
+                          <p className="text-center text-sm leading-10 text-slate-500 dark:text-gray-400">
+                            No results, create more by typing.
+                          </p>
+                        }
+                      />
+                    </FormControl>
                   </FormItem>
                 )}
               />
-              <Controller
-                control={form.control}
-                name="textColor"
-                defaultValue={"#000000"}
-                render={({ field: { onChange, value } }) => (
-                  <FormItem>
-                    <FormLabel>Text Color</FormLabel>
-                    <HexColorPicker color={value} onChange={onChange} />
-                  </FormItem>
-                )}
-              />
-            </div>
-          )}
-          <DialogFooter>
-            <div className="mt-5 flex w-full space-x-2">
-              <Button
-                variant={"secondary"}
-                type="reset"
-                onClick={() =>
-                  form.reset({
-                    url: "",
-                    name: "",
-                    bgColor: "",
-                    textColor: "",
-                  })
-                }
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={() => form.handleSubmit(onSubmit)}
-                className=" w-full"
-                type="submit"
-              >
-                Create
-              </Button>
-            </div>
-          </DialogFooter>
+            )}
+
+            {showColorPicker && (
+              <div className="flex gap-10">
+                <Controller
+                  control={form.control}
+                  name="bgColor"
+                  defaultValue={"#ffffff"}
+                  render={({ field: { onChange, value } }) => (
+                    <FormItem>
+                      <FormLabel>Background Color</FormLabel>
+                      <HexColorPicker color={value} onChange={onChange} />
+                    </FormItem>
+                  )}
+                />
+                <Controller
+                  control={form.control}
+                  name="textColor"
+                  defaultValue={"#000000"}
+                  render={({ field: { onChange, value } }) => (
+                    <FormItem>
+                      <FormLabel>Text Color</FormLabel>
+                      <HexColorPicker color={value} onChange={onChange} />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            )}
+          </div>
         </form>
       </Form>
     </div>
@@ -284,12 +347,12 @@ export function Preview({
   }
 
   return (
-    <div className="mx-auto w-full max-w-[500px] px-5">
+    <div className="mx-auto min-h-[300px] w-full max-w-[500px] px-5">
       <Label>Preview</Label>
       <div
         className={cn(
-          "mx-auto mb-5 flex min-h-[200px] w-full flex-col items-center",
-          "justify-center rounded-md border border-dashed bg-gray-100/50 p-5 text-center",
+          "mx-auto mb-2 flex h-full w-full flex-col items-center",
+          "justify-center rounded-md border border-dashed bg-gray-100/50 p-4 text-center",
         )}
       >
         {preview}

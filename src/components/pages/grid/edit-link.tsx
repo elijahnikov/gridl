@@ -69,6 +69,7 @@ export default function EditLink({
     resolver: zodResolver(formSchema),
     defaultValues: {
       ...gridItem,
+      tags: [],
       bgColor: gridItem.bgColor ?? undefined,
       url: gridItem.url ?? undefined,
       textColor: gridItem.textColor ?? undefined,
