@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
 
 export const gridItemTagRouter = createTRPCRouter({
@@ -26,12 +26,12 @@ export const gridItemTagRouter = createTRPCRouter({
   //
   // GET: get all tags for specific user
   //
-  getTags: protectedProcedure.query(async ({ ctx }) => {
-    const currentUserId = ctx.session.user.id;
-    console.log(1, ctx.req?.ip, ctx.geolocation);
-    if (!currentUserId) {
-      throw new TRPCError({ code: "UNAUTHORIZED" });
-    }
+  getTags: publicProcedure.query(async ({ ctx }) => {
+    // const currentUserId = ctx.session.user.id;
+    // console.log(1, ctx.req?.ip, ctx.geolocation);
+    // if (!currentUserId) {
+    //   throw new TRPCError({ code: "UNAUTHORIZED" });
+    // }
     return {
       ip: ctx.req?.ip,
       geo: ctx.geolocation,
