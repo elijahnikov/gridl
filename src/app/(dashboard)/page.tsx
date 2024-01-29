@@ -1,7 +1,10 @@
 import CreateGrid from "@/components/pages/grids/create-grid";
 import GridList from "@/components/pages/grids/grid-list";
+import { api } from "@/trpc/server";
 
 export default function Home() {
+  const data = api.gridItemTag.getTags.query();
+
   return (
     <>
       <div className="z-10 flex h-20 w-full border-b bg-white">
@@ -16,6 +19,7 @@ export default function Home() {
       </div>
       <div className="w-full">
         <div className="my-10 grid grid-cols-2 gap-5 px-[20px] sm:px-[100px] lg:grid-cols-2 lg:px-[200px] xl:grid-cols-4">
+          {JSON.stringify(data)}
           <GridList />
         </div>
       </div>
