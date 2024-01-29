@@ -1,16 +1,9 @@
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
-import { Ratelimit } from "@upstash/ratelimit";
-import { Redis } from "@upstash/redis/nodejs";
 import { createGridSchema } from "../schemas/grid";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-
-const ratelimit = new Ratelimit({
-  redis: Redis.fromEnv(),
-  limiter: Ratelimit.slidingWindow(1, "5 s"),
-  analytics: true,
-  prefix: "@upstash/ratelimit",
-});
+import { ratelimit } from "@/utils/ratelimit";
+import { ipAddress } from "@vercel/edge";
 
 export const gridRouter = createTRPCRouter({
   //
@@ -21,7 +14,8 @@ export const gridRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const currentUserId = ctx.session.user.id;
 
-      const { success } = await ratelimit.limit("createGrid");
+      const ip = ipAddress(ctx.req as Request) ?? "unknown";
+      const { success } = await ratelimit().limit(ip);
       if (!success)
         throw new TRPCError({
           code: "TOO_MANY_REQUESTS",
@@ -151,7 +145,8 @@ export const gridRouter = createTRPCRouter({
   updateDefault: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
-      const { success } = await ratelimit.limit("updateDefault");
+      const ip = ipAddress(ctx.req as Request) ?? "unknown";
+      const { success } = await ratelimit().limit(ip);
       if (!success) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
 
       await ctx.db.$transaction([

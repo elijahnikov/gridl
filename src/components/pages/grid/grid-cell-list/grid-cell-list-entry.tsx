@@ -20,9 +20,15 @@ export default function GridCellListEntry({
       <div className="min-w-0 flex-1 space-y-1">
         <div className="flex items-center space-x-2">
           <CardTitle className="text-lg">{item.name}</CardTitle>
-          <Badge className="px-2 py-1 text-xs" variant="default">
-            Type
-          </Badge>
+          {item.tags?.split(",").map((tag, index) => (
+            <Badge
+              key={index}
+              className="rounded-lg px-2 py-1 text-xs"
+              variant="outline"
+            >
+              {tag}
+            </Badge>
+          ))}
         </div>
         <CardDescription className="overflow-hidden truncate overflow-ellipsis text-sm text-gray-500 dark:text-gray-400">
           {format(item.createdAt, "dd MMM yyyy")} ·{" "}

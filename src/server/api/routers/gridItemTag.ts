@@ -1,52 +1,53 @@
 import { z } from "zod";
-import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
-import { ipAddress } from "@vercel/edge";
 
 export const gridItemTagRouter = createTRPCRouter({
   //
   // CREATE: create tag
   //
   createTag: protectedProcedure
-    .input(z.object({ text: z.string(), bgColor: z.string() }))
+    .input(z.object({ label: z.string(), value: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      const existingTag = await ctx.db.gridItemTag.findFirst({
+      const currentUserId = ctx.session.user.id;
+      if (!currentUserId) {
+        throw new TRPCError({ code: "UNAUTHORIZED" });
+      }
+      const existingTag = await ctx.db.tag.findFirst({
         where: {
-          text: input.text,
+          label: input.label,
+          value: input.value,
+          userId: currentUserId,
         },
       });
       if (existingTag) {
         throw new TRPCError({ code: "CONFLICT" });
       }
-      await ctx.db.gridItemTag.create({
+      const tag = await ctx.db.tag.create({
         data: {
           ...input,
+          userId: currentUserId,
         },
       });
+      return tag;
     }),
   //
   // GET: get all tags for specific user
   //
-  getTags: publicProcedure.query(async ({ ctx }) => {
-    // const currentUserId = ctx.session.user.id;
-    // console.log(1, ctx.req?.ip, ctx.geolocation);
-    // if (!currentUserId) {
-    //   throw new TRPCError({ code: "UNAUTHORIZED" });
-    // }
-    const ip2 = ipAddress(ctx.req as Request) ?? "unknown";
-    const ip = (ctx.req?.headers.get("x-forwarded-for") ?? "127.0.0.1").split(
-      ",",
-    )[0];
-    return {
-      ip,
-      ip2,
-      geo: ctx.geolocation,
-    };
-    // const tags = await ctx.db.gridItemTag.findMany({
-    //   where: {
-    //     userId: currentUserId,
-    //   },
-    // });
-    // return tags;
+  getTags: protectedProcedure.query(async ({ ctx }) => {
+    const currentUserId = ctx.session.user.id;
+    if (!currentUserId) {
+      throw new TRPCError({ code: "UNAUTHORIZED" });
+    }
+    const tags = await ctx.db.tag.findMany({
+      where: {
+        userId: currentUserId,
+      },
+      select: {
+        label: true,
+        value: true,
+      },
+    });
+    return tags;
   }),
 });

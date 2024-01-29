@@ -13,4 +13,5 @@ export const createGridItemSchema = z.object({
   y: z.number(),
   h: z.number(),
   w: z.number(),
+  tags: z.object({ value: z.string(), label: z.string() }).array().optional(),
 });
