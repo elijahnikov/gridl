@@ -28,12 +28,12 @@ export const gridItemTagRouter = createTRPCRouter({
   //
   getTags: protectedProcedure.query(async ({ ctx }) => {
     const currentUserId = ctx.session.user.id;
-    console.log(1, ctx.req.ip, ctx.geolocation);
+    console.log(1, ctx.req?.ip, ctx.geolocation);
     if (!currentUserId) {
       throw new TRPCError({ code: "UNAUTHORIZED" });
     }
     return {
-      ip: ctx.req.ip,
+      ip: ctx.req?.ip,
       geo: ctx.geolocation,
     };
     // const tags = await ctx.db.gridItemTag.findMany({

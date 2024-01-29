@@ -32,7 +32,7 @@ export const createTRPCContext = async (opts: {
   headers: Headers;
   geolocation?: Geo;
   userAgent?: UserAgent;
-  req: NextRequest;
+  req?: NextRequest;
 }) => {
   const session = await getServerAuthSession();
 
