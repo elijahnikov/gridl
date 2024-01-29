@@ -1,9 +1,11 @@
+"use client";
+
 import CreateGrid from "@/components/pages/grids/create-grid";
 import GridList from "@/components/pages/grids/grid-list";
-import { api } from "@/trpc/server";
+import { api } from "@/trpc/react";
 
 export default function Home() {
-  const data = api.gridItemTag.getTags.query();
+  const { data: test } = api.gridItemTag.getTags.useQuery();
 
   return (
     <>
@@ -17,9 +19,9 @@ export default function Home() {
           </div>
         </div>
       </div>
+      {JSON.stringify(test)}
       <div className="w-full">
         <div className="my-10 grid grid-cols-2 gap-5 px-[20px] sm:px-[100px] lg:grid-cols-2 lg:px-[200px] xl:grid-cols-4">
-          {JSON.stringify(data)}
           <GridList />
         </div>
       </div>
