@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
+import { ipAddress } from "@vercel/edge";
 
 export const gridItemTagRouter = createTRPCRouter({
   //
@@ -32,11 +33,13 @@ export const gridItemTagRouter = createTRPCRouter({
     // if (!currentUserId) {
     //   throw new TRPCError({ code: "UNAUTHORIZED" });
     // }
+    const ip2 = ipAddress(ctx.req as Request) ?? "unknown";
     const ip = (ctx.req?.headers.get("x-forwarded-for") ?? "127.0.0.1").split(
       ",",
     )[0];
     return {
       ip,
+      ip2,
       geo: ctx.geolocation,
     };
     // const tags = await ctx.db.gridItemTag.findMany({
