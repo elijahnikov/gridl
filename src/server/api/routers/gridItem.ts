@@ -56,11 +56,13 @@ export const gridItemRouter = createTRPCRouter({
       const { success } = await ratelimit.limit("updateGridItem");
       if (!success) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
       const { gridItemId, tags, ...rest } = input;
+      const tagsString = tags?.map((tag) => tag.value).join(",");
       await ctx.db.gridItem.update({
         where: {
           id: gridItemId,
         },
         data: {
+          tags: tagsString,
           ...rest,
         },
       });
