@@ -10,7 +10,7 @@ import {
   DialogTrigger,
 } from "@/lib/ui/dialog";
 import { DropdownMenuItem } from "@/lib/ui/dropdown-menu";
-import { type RouterOutputs } from "@/trpc/shared";
+
 import { type RefObject, useEffect, useMemo, useRef, useState } from "react";
 import { Preview } from "./add-link";
 import { createGridItemSchema } from "@/server/api/schemas/gridItem";
@@ -39,6 +39,7 @@ import { Input } from "@/lib/ui/input";
 import { DialogDescription } from "@radix-ui/react-dialog";
 import LoadingSpinner from "@/components/common/loading-spinner";
 import MultipleSelector from "@/lib/ui/fancy-select";
+import { type GridCell } from "./grid-cell-list/grid-cell-list";
 
 const formSchema = createGridItemSchema.omit({ gridSlug: true });
 
@@ -47,10 +48,7 @@ export default function EditLink({
   fromDropdown,
 }: {
   slug: string;
-  gridItem: Omit<
-    RouterOutputs["grid"]["gridForEditing"]["gridItems"][number],
-    "gridSlug"
-  >;
+  gridItem: GridCell;
   fromDropdown?: boolean;
 }) {
   const [open, setOpen] = useState<boolean>(false);
@@ -58,7 +56,7 @@ export default function EditLink({
   const trpcUtils = api.useUtils();
   const { mutate } = api.gridItem.updateGridItem.useMutation({
     onSuccess() {
-      void trpcUtils.grid.gridForEditing.invalidate();
+      void trpcUtils.gridItem.gridItems.invalidate();
       toast.success("Successfully updated your link");
       setOpen(false);
     },
@@ -78,7 +76,7 @@ export default function EditLink({
             value: tag,
             label: tag,
           };
-        }) ?? [],
+        }) ?? undefined,
       bgColor: gridItem.bgColor ?? undefined,
       url: gridItem.url ?? undefined,
       textColor: gridItem.textColor ?? undefined,
@@ -109,6 +107,7 @@ export default function EditLink({
   }, [form, linkComponent, url]);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
+    console.log(values.tags);
     mutate({
       ...values,
       gridItemId: gridItem.id,

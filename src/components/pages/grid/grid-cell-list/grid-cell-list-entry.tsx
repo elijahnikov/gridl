@@ -10,7 +10,7 @@ export default function GridCellListEntry({
   item,
   slug,
 }: {
-  item: GridCell[number];
+  item: GridCell;
   slug: string;
 }) {
   const url = item.url?.replace("https://", "").replace("http://", "");

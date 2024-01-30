@@ -240,6 +240,7 @@ function InputSection({
                         value={field.value}
                         onChange={field.onChange}
                         defaultOptions={data}
+                        hidePlaceholderWhenSelected
                         placeholder="Tag your links, type a new tag to create it!"
                         creatable
                         loadingIndicator={<LoadingSpinner />}

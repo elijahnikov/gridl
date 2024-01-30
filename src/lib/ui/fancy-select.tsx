@@ -73,7 +73,7 @@ interface MultipleSelectorProps {
     React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input>,
     "value" | "placeholder" | "disabled"
   >;
-  creatableCallback: (value: string) => void;
+  creatableCallback?: (value: string) => void;
 }
 
 export interface MultipleSelectorRef {
@@ -328,7 +328,7 @@ const MultipleSelector = React.forwardRef<
       >
         <div
           className={cn(
-            "border-input ring-offset-background focus-within:ring-ring group rounded-md border px-3 py-2 text-sm focus-within:ring-2 focus-within:ring-offset-2",
+            "border-input focus-within:ring-ring group min-h-10 overflow-y-auto rounded-md border px-3 py-2 text-sm ring-slate-950 focus-within:ring-2 focus-within:ring-offset-2",
             className,
           )}
         >

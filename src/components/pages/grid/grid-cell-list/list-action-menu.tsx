@@ -11,7 +11,7 @@ import { api } from "@/trpc/react";
 import { MoreVertical } from "lucide-react";
 import { toast } from "sonner";
 import EditLink from "../edit-link";
-import { type RouterOutputs } from "@/trpc/shared";
+import { type GridCell } from "./grid-cell-list";
 
 export default function ListActionMenu({
   gridItemId,
@@ -20,7 +20,7 @@ export default function ListActionMenu({
 }: {
   gridItemId: string;
   slug: string;
-  gridItem: RouterOutputs["grid"]["gridForEditing"]["gridItems"][number];
+  gridItem: GridCell;
 }) {
   const trpcUtils = api.useUtils();
   const { mutate } = api.gridItem.delete.useMutation({

@@ -14,6 +14,45 @@ const ratelimit = new Ratelimit({
 
 export const gridItemRouter = createTRPCRouter({
   //
+  //  GET: Get grid items for grid
+  //
+  gridItems: protectedProcedure
+    .input(z.object({ slug: z.string(), sortOrder: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const { sortOrder, slug } = input;
+      const currentUser = ctx.session.user;
+      const grid = await ctx.db.grid.findFirst({
+        where: {
+          slug: slug,
+          user: {
+            name: currentUser.name,
+          },
+        },
+      });
+      if (grid) {
+        return await ctx.db.gridItem.findMany({
+          where: {
+            gridId: grid.id,
+          },
+          include: {
+            _count: {
+              select: {
+                itemClicks: true,
+              },
+            },
+          },
+          orderBy:
+            sortOrder === "clicks"
+              ? {
+                  itemClicks: {
+                    _count: "desc",
+                  },
+                }
+              : { [sortOrder]: "desc" },
+        });
+      }
+    }),
+  //
   // CREATE: Create grid item for specific grid
   //
   createGridItem: protectedProcedure
@@ -32,7 +71,10 @@ export const gridItemRouter = createTRPCRouter({
           userId: currentUserId,
         },
       });
-      const tagsString = tags?.map((tag) => tag.value).join(",");
+      const tagsString =
+        tags && tags.length === 0
+          ? null
+          : tags?.map((tag) => tag.value).join(",");
       if (grid) {
         await ctx.db.gridItem.create({
           data: {
@@ -56,7 +98,10 @@ export const gridItemRouter = createTRPCRouter({
       const { success } = await ratelimit.limit("updateGridItem");
       if (!success) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
       const { gridItemId, tags, ...rest } = input;
-      const tagsString = tags?.map((tag) => tag.value).join(",");
+      const tagsString =
+        tags && tags.length === 0
+          ? null
+          : tags?.map((tag) => tag.value).join(",");
       await ctx.db.gridItem.update({
         where: {
           id: gridItemId,

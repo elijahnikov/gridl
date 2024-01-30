@@ -2,8 +2,6 @@
 
 import LoadingSpinner from "@/components/common/loading-spinner";
 import GridCellList from "@/components/pages/grid/grid-cell-list/grid-cell-list";
-import GridCellListEmpty from "@/components/pages/grid/grid-cell-list/grid-cell-list-empty";
-import GridCellListPlaceholder from "@/components/pages/grid/grid-cell-list/grid-cell-list-placeholder";
 import GridProjectHeader from "@/components/pages/grid/header";
 import { getGridBySlug } from "@/utils/getGrids";
 import { useSession } from "next-auth/react";
@@ -33,11 +31,7 @@ export default function GridProjectPage() {
       </div>
       <div className="w-full">
         <div className="my-10 px-[20px] sm:px-[80px] lg:px-[200px]">
-          {isLoading && <GridCellListPlaceholder />}
-          {!isLoading && grid.gridItems.length === 0 && <GridCellListEmpty />}
-          {!isLoading && grid.gridItems.length > 0 && (
-            <GridCellList slug={slug} gridItems={grid.gridItems} />
-          )}
+          <GridCellList slug={slug} />
         </div>
       </div>
     </div>
