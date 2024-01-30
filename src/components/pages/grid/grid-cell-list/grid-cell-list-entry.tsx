@@ -18,7 +18,7 @@ export default function GridCellListEntry({
     <Card className="flex items-center justify-between gap-4 p-4">
       {item.url && <Favicon url={item.url} />}
       <div className="min-w-0 flex-1 space-y-1">
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2 truncate">
           <CardTitle className="text-lg">{item.name}</CardTitle>
           {item.tags?.split(",").map((tag, index) => (
             <Badge

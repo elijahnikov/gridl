@@ -11,7 +11,7 @@ import {
 } from "@/lib/ui/dialog";
 import { DropdownMenuItem } from "@/lib/ui/dropdown-menu";
 import { type RouterOutputs } from "@/trpc/shared";
-import { useEffect, useMemo, useState } from "react";
+import { type RefObject, useEffect, useMemo, useRef, useState } from "react";
 import { Preview } from "./add-link";
 import { createGridItemSchema } from "@/server/api/schemas/gridItem";
 import stringIsValidURL from "@/utils/isValidUrl";
@@ -37,6 +37,8 @@ import {
 import { HexColorPicker } from "react-colorful";
 import { Input } from "@/lib/ui/input";
 import { DialogDescription } from "@radix-ui/react-dialog";
+import LoadingSpinner from "@/components/common/loading-spinner";
+import MultipleSelector from "@/lib/ui/fancy-select";
 
 const formSchema = createGridItemSchema.omit({ gridSlug: true });
 
@@ -64,12 +66,19 @@ export default function EditLink({
       toast.error(error.message);
     },
   });
+  const formRef = useRef<HTMLFormElement>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       ...gridItem,
-      tags: [],
+      tags:
+        gridItem.tags?.split(",").map((tag) => {
+          return {
+            value: tag,
+            label: tag,
+          };
+        }) ?? [],
       bgColor: gridItem.bgColor ?? undefined,
       url: gridItem.url ?? undefined,
       textColor: gridItem.textColor ?? undefined,
@@ -127,7 +136,7 @@ export default function EditLink({
         <div>
           <div className="flex">
             <InputSection
-              setOpen={setOpen}
+              formRef={formRef}
               showColorPicker={
                 typeof linkComponent === "undefined" &&
                 form.getValues("url") !== "" &&
@@ -144,6 +153,30 @@ export default function EditLink({
               url={url}
             />
           </div>
+          <DialogFooter>
+            <div className="mt-10 flex w-full space-x-2">
+              <Button
+                onClick={() => setOpen(false)}
+                variant={"secondary"}
+                type="reset"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={() => {
+                  if (formRef.current) {
+                    formRef.current.dispatchEvent(
+                      new Event("submit", { bubbles: true }),
+                    );
+                  }
+                }}
+                className=" w-full"
+                type="submit"
+              >
+                Update
+              </Button>
+            </div>
+          </DialogFooter>
         </div>
       </DialogContent>
     </Dialog>
@@ -154,17 +187,30 @@ export function InputSection({
   form,
   onSubmit,
   showColorPicker,
-  setOpen,
+  formRef,
 }: {
   form: UseFormReturn<z.infer<typeof formSchema>>;
   onSubmit: (values: z.infer<typeof formSchema>) => void;
   showColorPicker: boolean;
-  setOpen: (f: boolean) => void;
+  formRef: RefObject<HTMLFormElement>;
 }) {
+  const trpcUtils = api.useUtils();
+  const { mutate: tagMutate } = api.gridItemTag.createTag.useMutation({
+    onSuccess: () => {
+      toast.success("Created your tag.");
+      void trpcUtils.gridItemTag.getTags.invalidate();
+    },
+  });
+  const { data, isLoading } = api.gridItemTag.getTags.useQuery();
+
   return (
     <div className="w-[80%] ">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+        <form
+          ref={formRef}
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-5"
+        >
           <FormField
             control={form.control}
             name="url"
@@ -189,6 +235,40 @@ export function InputSection({
               </FormItem>
             )}
           />
+          {isLoading ? (
+            <div className="mt-5">
+              <LoadingSpinner size={20} />
+            </div>
+          ) : (
+            <FormField
+              control={form.control}
+              name="tags"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Tags</FormLabel>
+                  <FormControl>
+                    <MultipleSelector
+                      creatableCallback={(label) =>
+                        tagMutate({ label, value: label })
+                      }
+                      maxSelected={3}
+                      value={field.value}
+                      onChange={field.onChange}
+                      defaultOptions={data}
+                      placeholder="Tag your links, type a new tag to create it!"
+                      creatable
+                      loadingIndicator={<LoadingSpinner />}
+                      emptyIndicator={
+                        <p className="text-center text-sm leading-10 text-slate-500 dark:text-gray-400">
+                          No results, create more by typing.
+                        </p>
+                      }
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+          )}
           {showColorPicker && (
             <div className="flex gap-10">
               <Controller
@@ -215,24 +295,6 @@ export function InputSection({
               />
             </div>
           )}
-          <DialogFooter>
-            <div className="mt-5 flex w-full space-x-2">
-              <Button
-                onClick={() => setOpen(false)}
-                variant={"secondary"}
-                type="reset"
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={() => form.handleSubmit(onSubmit)}
-                className=" w-full"
-                type="submit"
-              >
-                Update
-              </Button>
-            </div>
-          </DialogFooter>
         </form>
       </Form>
     </div>
