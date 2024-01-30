@@ -11,7 +11,7 @@ import {
 } from "@/lib/ui/dialog";
 import { DropdownMenuItem } from "@/lib/ui/dropdown-menu";
 import { type RouterOutputs } from "@/trpc/shared";
-import { RefObject, useEffect, useMemo, useRef, useState } from "react";
+import { type RefObject, useEffect, useMemo, useRef, useState } from "react";
 import { Preview } from "./add-link";
 import { createGridItemSchema } from "@/server/api/schemas/gridItem";
 import stringIsValidURL from "@/utils/isValidUrl";
@@ -137,7 +137,6 @@ export default function EditLink({
           <div className="flex">
             <InputSection
               formRef={formRef}
-              setOpen={setOpen}
               showColorPicker={
                 typeof linkComponent === "undefined" &&
                 form.getValues("url") !== "" &&
@@ -188,13 +187,11 @@ export function InputSection({
   form,
   onSubmit,
   showColorPicker,
-  setOpen,
   formRef,
 }: {
   form: UseFormReturn<z.infer<typeof formSchema>>;
   onSubmit: (values: z.infer<typeof formSchema>) => void;
   showColorPicker: boolean;
-  setOpen: (f: boolean) => void;
   formRef: RefObject<HTMLFormElement>;
 }) {
   const trpcUtils = api.useUtils();
