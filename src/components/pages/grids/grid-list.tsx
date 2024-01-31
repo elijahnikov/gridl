@@ -6,7 +6,7 @@ import NoGridsPlaceholder from "./no-grids-placeholder";
 import GridCard from "./grid-card";
 
 export default function GridList() {
-  const { data: grids, isLoading } = api.grid.grids.useQuery();
+  const { data: grids, isLoading } = api.grid.grids.useQuery({});
 
   if (isLoading) {
     return Array.from({ length: 4 }).map((_, i) => (

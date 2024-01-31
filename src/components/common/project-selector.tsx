@@ -26,9 +26,7 @@ export default function ProjectSelector({
   const [open, setOpen] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
 
-  const data = api.grid.gridForEditing.useQuery({
-    slug,
-  });
+  const { data } = api.grid.grids.useQuery({ limit: 5 });
 
   return (
     <>
@@ -56,11 +54,17 @@ export default function ProjectSelector({
               </DropdownMenuItem>
             </Link>
             <DropdownMenuLabel className="text-xs text-slate-600">
-              Recent grids
+              More grids
             </DropdownMenuLabel>
-            <DropdownMenuGroup>
-              <DropdownMenuItem>Assign to...</DropdownMenuItem>
-            </DropdownMenuGroup>
+            {data
+              ?.filter((grid) => grid.slug !== slug)
+              .map((grid) => (
+                <Link key={grid.id} href={`/project/${grid.slug}`}>
+                  <DropdownMenuItem className="cursor-pointer">
+                    {grid.name}
+                  </DropdownMenuItem>
+                </Link>
+              ))}
           </DropdownMenuContent>
         </DropdownMenu>
       )}

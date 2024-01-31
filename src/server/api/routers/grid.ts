@@ -57,39 +57,49 @@ export const gridRouter = createTRPCRouter({
   //
   // READ: All grids for current user
   //
-  grids: protectedProcedure.query(async ({ ctx }) => {
-    const grids = await ctx.db.grid.findMany({
-      where: {
-        userId: ctx.session.user.id,
-      },
-      orderBy: [
-        {
-          default: "desc",
+  grids: protectedProcedure
+    .input(
+      z.object({
+        orderBy: z.string().optional(),
+        limit: z.number().optional(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const grids = await ctx.db.grid.findMany({
+        where: {
+          userId: ctx.session.user.id,
         },
-        { createdAt: "desc" },
-      ],
-      select: {
-        id: true,
-        user: {
-          select: {
-            name: true,
+        take: input.limit ? input.limit : undefined,
+        orderBy: input.orderBy
+          ? { [input.orderBy]: "asc" }
+          : [
+              {
+                default: "desc",
+              },
+              { createdAt: "desc" },
+            ],
+        select: {
+          id: true,
+          user: {
+            select: {
+              name: true,
+            },
+          },
+          name: true,
+          createdAt: true,
+          slug: true,
+          bgColor: true,
+          default: true,
+          bgImageUrl: true,
+          _count: {
+            select: {
+              gridItems: true,
+            },
           },
         },
-        name: true,
-        createdAt: true,
-        slug: true,
-        bgColor: true,
-        default: true,
-        bgImageUrl: true,
-        _count: {
-          select: {
-            gridItems: true,
-          },
-        },
-      },
-    });
-    return grids;
-  }),
+      });
+      return grids;
+    }),
   //
   // READ: Get specific grid by id for editing,
   //
