@@ -8,10 +8,9 @@ export function getGridBySlug(slug: string) {
   return { data, isLoading };
 }
 
-export function getGridItemsBySlug(slug: string, sortOrder: string) {
+export function getGridItemsBySlug(slug: string) {
   const { data, isLoading } = api.gridItem.gridItems.useQuery({
     slug,
-    sortOrder,
   });
   return { data, isLoading };
 }

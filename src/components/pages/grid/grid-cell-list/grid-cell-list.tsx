@@ -43,8 +43,8 @@ export default function GridCellList({ slug }: { slug: string }) {
   const [searchValue, setSearchValue] = useState<string>("");
   const [domainsFilter, setDomainsFilter] = useState<Option[]>([]);
   const [tagsFilter, setTagsFilter] = useState<Option[]>([]);
-  const { data: gridItems, isLoading } = getGridItemsBySlug(slug, sortOrder);
-
+  const { data: gridItems, isLoading } = getGridItemsBySlug(slug);
+  console.log(gridItems);
   const tagOptions = useMemo(() => {
     return Array.from(
       new Set(
@@ -100,6 +100,28 @@ export default function GridCellList({ slug }: { slug: string }) {
     return nameMatches && domainMatches && tagMatches;
   });
 
+  const sortByProperty =
+    (property: keyof GridCell, order: "asc" | "desc" = "desc") =>
+    (a: GridCell, b: GridCell) => {
+      const aValue = a[property];
+      const bValue = b[property];
+
+      if (aValue === null || aValue === undefined) {
+        return order === "asc" ? -1 : 1;
+      }
+
+      if (bValue === null || bValue === undefined) {
+        return order === "asc" ? 1 : -1;
+      }
+      const comparison =
+        order === "asc" ? (aValue < bValue ? -1 : 1) : aValue > bValue ? -1 : 1;
+
+      return comparison;
+    };
+
+  const sortedData = [...(filteredData ?? [])].sort(
+    sortByProperty(sortOrder as keyof GridCell),
+  );
   if (isLoading) {
     return <GridCellListPlaceholder />;
   }
@@ -149,7 +171,7 @@ export default function GridCellList({ slug }: { slug: string }) {
           </Select>
         </div>
       </div>
-      {filteredData?.map((item, index) => (
+      {sortedData?.map((item, index) => (
         <GridCellListEntry key={index} item={item} slug={slug} />
       ))}
     </div>

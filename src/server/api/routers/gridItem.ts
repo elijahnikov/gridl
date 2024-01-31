@@ -17,9 +17,9 @@ export const gridItemRouter = createTRPCRouter({
   //  GET: Get grid items for grid
   //
   gridItems: protectedProcedure
-    .input(z.object({ slug: z.string(), sortOrder: z.string() }))
+    .input(z.object({ slug: z.string() }))
     .query(async ({ ctx, input }) => {
-      const { sortOrder, slug } = input;
+      const { slug } = input;
       const currentUser = ctx.session.user;
       const grid = await ctx.db.grid.findFirst({
         where: {
@@ -41,14 +41,6 @@ export const gridItemRouter = createTRPCRouter({
               },
             },
           },
-          orderBy:
-            sortOrder === "clicks"
-              ? {
-                  itemClicks: {
-                    _count: "desc",
-                  },
-                }
-              : { [sortOrder]: "desc" },
         });
       }
     }),
