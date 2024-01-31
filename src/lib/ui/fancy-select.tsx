@@ -332,7 +332,7 @@ const MultipleSelector = React.forwardRef<
             className,
           )}
         >
-          <div className="flex flex-wrap gap-1">
+          <div className="flex w-full flex-wrap gap-1">
             {selected.map((option) => {
               return (
                 <Badge

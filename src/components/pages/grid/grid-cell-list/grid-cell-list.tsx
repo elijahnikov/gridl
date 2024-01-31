@@ -2,7 +2,7 @@
 
 import GridCellListEntry from "./grid-cell-list-entry";
 import { Input } from "@/lib/ui/input";
-import MultipleSelector from "@/lib/ui/fancy-select";
+import MultipleSelector, { type Option } from "@/lib/ui/fancy-select";
 import {
   Select,
   SelectContent,
@@ -11,7 +11,7 @@ import {
   SelectValue,
 } from "@/lib/ui/select";
 import { getGridItemsBySlug } from "@/utils/getGrids";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import GridCellListPlaceholder from "./grid-cell-list-placeholder";
 import GridCellListEmpty from "./grid-cell-list-empty";
 
@@ -41,7 +41,64 @@ export type GridCell = {
 export default function GridCellList({ slug }: { slug: string }) {
   const [sortOrder, setSortOrder] = useState<string>("name");
   const [searchValue, setSearchValue] = useState<string>("");
+  const [domainsFilter, setDomainsFilter] = useState<Option[]>([]);
+  const [tagsFilter, setTagsFilter] = useState<Option[]>([]);
   const { data: gridItems, isLoading } = getGridItemsBySlug(slug, sortOrder);
+
+  const tagOptions = useMemo(() => {
+    return Array.from(
+      new Set(
+        gridItems?.flatMap((obj) =>
+          ((obj.tags ?? "") as string).split(",").map((tag) => tag.trim()),
+        ) ?? [],
+      ),
+    )
+      .filter((tag) => tag !== "")
+      .map((tag) => ({ label: tag, value: tag }));
+  }, [gridItems]);
+
+  const domainOptions = useMemo(() => {
+    return Array.from(
+      new Set(
+        (gridItems ?? [])
+          .map((obj) => {
+            if (obj.url) {
+              const urlObj = new URL(obj.url);
+              return urlObj.hostname;
+            }
+            return undefined;
+          })
+          .filter((domain) => domain !== undefined) as string[],
+      ),
+    )
+      .filter((domain) => domain !== "")
+      .map((domain) => ({ label: domain, value: domain }));
+  }, [gridItems]);
+
+  const filteredData = gridItems?.filter((item) => {
+    const nameMatches =
+      !searchValue ||
+      (item.name ?? "").toLowerCase().includes(searchValue.toLowerCase());
+
+    const domainMatches =
+      !domainsFilter.length ||
+      (item.url &&
+        domainsFilter.some((filterItem) => {
+          const urlObj = new URL(item.url!);
+          const domain = urlObj.hostname;
+          return domain.includes(filterItem.value);
+        }));
+
+    const tagMatches =
+      !tagsFilter.length ||
+      (item.tags &&
+        tagsFilter.some((filterItem) => {
+          const tagsArray = item.tags!.split(",").map((tag) => tag.trim());
+          return tagsArray.includes(filterItem.value);
+        }));
+
+    return nameMatches && domainMatches && tagMatches;
+  });
 
   if (isLoading) {
     return <GridCellListPlaceholder />;
@@ -50,19 +107,9 @@ export default function GridCellList({ slug }: { slug: string }) {
     return <GridCellListEmpty />;
   }
 
-  const filteredGridItemLinks = gridItems?.filter((item) =>
-    item.name?.toLocaleLowerCase().includes(searchValue.toLocaleLowerCase()),
-  );
-
-  const tagsArray = Array.from(new Set(gridItems?.flatMap(obj =>
-    (obj.tags ?? '').split(',').map(tag => tag.trim())
-  )))
-    .filter(tag => tag !== '')
-    .map(tag => ({ label: tag, value: tag }));
-
   return (
     <div className="space-y-3">
-      <div className="flex grid w-full grid-cols-6 gap-2">
+      <div className="flex grid w-full grid-cols-3 gap-2 lg:grid-cols-6">
         <div className="col-span-1">
           <Input
             onChange={(e) => setSearchValue(e.target.value)}
@@ -70,16 +117,23 @@ export default function GridCellList({ slug }: { slug: string }) {
             className="w-full"
           />
         </div>
-        <div className="w-full col-span-2">
+        <div className="col-span-2 w-full">
           <MultipleSelector
+            onChange={setTagsFilter}
             hidePlaceholderWhenSelected
             className="bg-white"
-            defaultOptions={tagsArray}
+            defaultOptions={tagOptions}
             placeholder="Filter by tag"
           />
         </div>
-        <div className="w-full col-span-2">
-          <MultipleSelector className="bg-white" placeholder="Filter by link" />
+        <div className="col-span-2 w-full">
+          <MultipleSelector
+            onChange={setDomainsFilter}
+            hidePlaceholderWhenSelected
+            defaultOptions={domainOptions}
+            className="bg-white"
+            placeholder="Filter by link"
+          />
         </div>
         <div>
           <Select onValueChange={setSortOrder} defaultValue="createdAt">
@@ -95,7 +149,7 @@ export default function GridCellList({ slug }: { slug: string }) {
           </Select>
         </div>
       </div>
-      {filteredGridItemLinks?.map((item, index) => (
+      {filteredData?.map((item, index) => (
         <GridCellListEntry key={index} item={item} slug={slug} />
       ))}
     </div>
