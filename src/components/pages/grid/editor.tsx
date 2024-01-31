@@ -1,5 +1,6 @@
 "use client";
 
+import Favicon from "@/components/common/favicon";
 import { type RouterOutputs } from "@/trpc/shared";
 import { linksRenderMap } from "@/utils/linksMap";
 import { memo, useEffect, useMemo, useState } from "react";
@@ -7,15 +8,27 @@ import { Responsive, WidthProvider } from "react-grid-layout";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 
-const propertiesToDelete = ["type", "url", "text", "id", "gridId", "bgColor"];
+const propertiesToDelete = [
+  "type",
+  "url",
+  "text",
+  "id",
+  "gridId",
+  "bgColor",
+  "tags",
+  "name",
+];
 
 type LayoutType = {
   type: string;
+  name: string | null;
   url: string | null;
   text: string | null;
   bgColor: string | null;
+  textColor: string | null;
   id: string;
   gridId: string;
+  slug: string;
 } & ReactGridLayout.Layout;
 
 type ResizeHandle = "s" | "w" | "e" | "n" | "sw" | "nw" | "se" | "ne";
@@ -44,13 +57,14 @@ function Editor({ data }: { data: RouterOutputs["grid"]["gridForEditing"] }) {
     const reshapedLayout =
       data.gridItems.map((grid) => {
         return {
-          ...grid,
           i: grid.id,
           resizeHandles: ["se", "nw"] as ResizeHandle[],
-          ...linksRenderMap.find((item) => item.type === grid.type)
+          ...grid,
+          ...linksRenderMap.find((item) => item.slug === grid.slug)
             ?.extraLayoutProps,
         };
       }) ?? [];
+
     setParsedLayout(reshapedLayout);
     setBackgroundColor(data?.bgColor ?? "white");
   }, [data]);
@@ -77,28 +91,25 @@ function Editor({ data }: { data: RouterOutputs["grid"]["gridForEditing"] }) {
         {parsedLayout.length > 0 &&
           parsedLayout.map((l) => (
             <div
-              style={
-                l.bgColor
-                  ? {
-                      backgroundColor: l.bgColor,
-                    }
-                  : {}
-              }
-              className="rounded-lg"
+              style={{
+                backgroundColor: l.bgColor ?? "white",
+                color: l.textColor ?? "black",
+                display: "flex",
+                justifyContent: "center",
+              }}
+              className="rounded-2xl"
               key={l.i}
             >
-              <div>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                  }}
-                >
-                  {linksRenderMap
-                    .find((item) => item.type === l.type)
-                    ?.render(l.url!)}
+              {l.type === "basicLink" ? (
+                <div className="flex items-center justify-center space-x-2">
+                  <Favicon size={20} url={l.url!} />
+                  <span>{l.name}</span>
                 </div>
-              </div>
+              ) : (
+                linksRenderMap
+                  .find((item) => item.slug === l.slug)
+                  ?.render(l.url!)
+              )}
             </div>
           ))}
       </ResponsiveGridLayout>

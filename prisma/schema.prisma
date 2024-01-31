@@ -156,7 +156,7 @@ model GridItemClick {
     updateAd  DateTime @updatedAt
 
     gridItemId String
-    gridItem   GridItem @relation(fields: [gridItemId], references: [id])
+    gridItem   GridItem @relation(fields: [gridItemId], references: [id], onDelete: Cascade)
 
     userId String
     user   User   @relation(fields: [userId], references: [id])

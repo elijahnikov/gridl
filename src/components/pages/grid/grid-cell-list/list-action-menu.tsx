@@ -26,7 +26,7 @@ export default function ListActionMenu({
   const { mutate } = api.gridItem.delete.useMutation({
     onSuccess: () => {
       toast.success("Successfully deleted your link");
-      void trpcUtils.grid.gridForEditing.invalidate();
+      void trpcUtils.gridItem.gridItems.invalidate();
     },
     onError: (error) => {
       toast.error(

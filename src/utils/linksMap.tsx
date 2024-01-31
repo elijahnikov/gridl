@@ -38,7 +38,7 @@ type SlugTypesIndex = (typeof slugTypes)[number];
 export type LinksRenderMapType = {
   type: LinkTypesIndex;
   slug: SlugTypesIndex;
-  render: (url: string) => React.ReactNode;
+  render: (url: string, name?: string) => React.ReactNode;
   extraLayoutProps?: Partial<ReactGridLayout.Layout>;
   name: string;
   icon: React.ReactNode;
@@ -106,5 +106,17 @@ export const linksRenderMap = [
     render: (url) => <div>{url}</div>,
     name: "SoundCloud",
     icon: <FaSoundcloud size={25} />,
+  },
+  //
+  // BASIC
+  //
+  {
+    type: "basicLink",
+    slug: "",
+    render: (url, name) => (
+      <div>
+        <p>{name}</p>
+      </div>
+    ),
   },
 ] as Array<LinksRenderMapType>;
