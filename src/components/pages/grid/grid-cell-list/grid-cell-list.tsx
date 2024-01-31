@@ -32,7 +32,7 @@ export type GridCell = {
 
 export default function GridCellList({ slug }: { slug: string }) {
   const { data: gridItems, isLoading } = getGridItemsBySlug(slug);
-  const [filteredData, setFilteredData] = useState<GridCell[]>([]);
+  const [filteredDataArr, setFilteredDataArr] = useState<GridCell[]>([]);
 
   if (isLoading) {
     return <GridCellListPlaceholder />;
@@ -46,10 +46,10 @@ export default function GridCellList({ slug }: { slug: string }) {
       {gridItems && (
         <GridCellListFilter
           gridItems={gridItems}
-          setFilteredData={setFilteredData}
+          setFilteredDataArray={setFilteredDataArr}
         />
       )}
-      {filteredData?.map((item, index) => (
+      {filteredDataArr?.map((item, index) => (
         <GridCellListEntry key={index} item={item} slug={slug} />
       ))}
     </div>

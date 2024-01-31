@@ -12,10 +12,10 @@ import { useEffect, useMemo, useState } from "react";
 
 export default function GridCellListFilter({
   gridItems,
-  setFilteredData,
+  setFilteredDataArray,
 }: {
   gridItems: GridCell[];
-  setFilteredData: React.Dispatch<React.SetStateAction<GridCell[]>>;
+  setFilteredDataArray: React.Dispatch<React.SetStateAction<GridCell[]>>;
 }) {
   const [sortOrder, setSortOrder] = useState<string>("name");
   const [searchValue, setSearchValue] = useState<string>("");
@@ -52,31 +52,6 @@ export default function GridCellListFilter({
       .map((domain) => ({ label: domain, value: domain }));
   }, [gridItems]);
 
-  const filteredData = gridItems?.filter((item) => {
-    const nameMatches =
-      !searchValue ||
-      (item.name ?? "").toLowerCase().includes(searchValue.toLowerCase());
-
-    const domainMatches =
-      !domainsFilter.length ||
-      (item.url &&
-        domainsFilter.some((filterItem) => {
-          const urlObj = new URL(item.url!);
-          const domain = urlObj.hostname;
-          return domain.includes(filterItem.value);
-        }));
-
-    const tagMatches =
-      !tagsFilter.length ||
-      (item.tags &&
-        tagsFilter.some((filterItem) => {
-          const tagsArray = item.tags!.split(",").map((tag) => tag.trim());
-          return tagsArray.includes(filterItem.value);
-        }));
-
-    return nameMatches && domainMatches && tagMatches;
-  });
-
   const sortByProperty =
     (property: keyof GridCell, order: "asc" | "desc" = "desc") =>
     (a: GridCell, b: GridCell) => {
@@ -97,15 +72,45 @@ export default function GridCellListFilter({
     };
 
   useEffect(() => {
+    const filteredData = gridItems?.filter((item) => {
+      const nameMatches =
+        !searchValue ||
+        (item.name ?? "").toLowerCase().includes(searchValue.toLowerCase());
+
+      const domainMatches =
+        !domainsFilter.length ||
+        (item.url &&
+          domainsFilter.some((filterItem) => {
+            const urlObj = new URL(item.url!);
+            const domain = urlObj.hostname;
+            return domain.includes(filterItem.value);
+          }));
+
+      const tagMatches =
+        !tagsFilter.length ||
+        (item.tags &&
+          tagsFilter.some((filterItem) => {
+            const tagsArray = item.tags!.split(",").map((tag) => tag.trim());
+            return tagsArray.includes(filterItem.value);
+          }));
+
+      return nameMatches && domainMatches && tagMatches;
+    });
     const sortedData = [...(filteredData ?? [])].sort(
       sortByProperty(
         sortOrder as keyof GridCell,
         sortOrder === "name" ? "asc" : "desc",
       ),
     );
-    setFilteredData(sortedData);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filteredData, sortOrder]);
+    setFilteredDataArray(sortedData);
+  }, [
+    domainsFilter,
+    gridItems,
+    searchValue,
+    setFilteredDataArray,
+    sortOrder,
+    tagsFilter,
+  ]);
 
   return (
     <div className="flex grid w-full grid-cols-3 gap-2 lg:grid-cols-6">
