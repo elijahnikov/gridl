@@ -4,9 +4,11 @@ import Favicon from "@/components/common/favicon";
 import { type RouterOutputs } from "@/trpc/shared";
 import { linksRenderMap } from "@/utils/linksMap";
 import { memo, useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 import { Responsive, WidthProvider } from "react-grid-layout";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
+import BackgroundPick from "./editor/background-color-select";
 
 const propertiesToDelete = [
   "type",
@@ -19,7 +21,7 @@ const propertiesToDelete = [
   "name",
 ];
 
-type LayoutType = {
+export type LayoutType = {
   type: string;
   name: string | null;
   url: string | null;
@@ -36,7 +38,6 @@ type ResizeHandle = "s" | "w" | "e" | "n" | "sw" | "nw" | "se" | "ne";
 function Editor({ data }: { data: RouterOutputs["grid"]["gridForEditing"] }) {
   const ResponsiveGridLayout = WidthProvider(Responsive);
 
-  const [backgroundColor, setBackgroundColor] = useState<string>("");
   const [parsedLayout, setParsedLayout] = useState<LayoutType[]>([]);
 
   const layouts = useMemo(() => {
@@ -58,15 +59,13 @@ function Editor({ data }: { data: RouterOutputs["grid"]["gridForEditing"] }) {
       data.gridItems.map((grid) => {
         return {
           i: grid.id,
-          resizeHandles: ["se", "nw"] as ResizeHandle[],
+          resizeHandles: ["se", "nw", "sw", "ne"] as ResizeHandle[],
           ...grid,
           ...linksRenderMap.find((item) => item.slug === grid.slug)
             ?.extraLayoutProps,
         };
       }) ?? [];
-
     setParsedLayout(reshapedLayout);
-    setBackgroundColor(data?.bgColor ?? "white");
   }, [data]);
 
   const gridEditor = useMemo(() => {
@@ -74,9 +73,9 @@ function Editor({ data }: { data: RouterOutputs["grid"]["gridForEditing"] }) {
       <ResponsiveGridLayout
         // onDrop={(e, r, t) => onDrop(e, r, t, selectedOnDropItem)}
         isDroppable={true}
-        // compactType={"vertical"}
+        // compactType={"horizontal"}
         layouts={layouts}
-        onLayoutChange={(e) => console.log({ e })}
+        // onLayoutChange={(e) => console.log({ e })}
         cols={{
           lg: 200,
           md: 200,
@@ -92,7 +91,7 @@ function Editor({ data }: { data: RouterOutputs["grid"]["gridForEditing"] }) {
           parsedLayout.map((l) => (
             <div
               style={{
-                backgroundColor: l.bgColor ?? "white",
+                backgroundColor: l.bgColor ?? "none",
                 color: l.textColor ?? "black",
                 display: "flex",
                 justifyContent: "center",
@@ -114,9 +113,27 @@ function Editor({ data }: { data: RouterOutputs["grid"]["gridForEditing"] }) {
           ))}
       </ResponsiveGridLayout>
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ResponsiveGridLayout, layouts, parsedLayout]);
 
-  return <div className="h-[73vh] rounded-md bg-white">{gridEditor}</div>;
+  return (
+    <div>
+      <div
+        style={{ background: data.bgColor ?? "none" }}
+        className="min-h-[80vh] rounded-md"
+      >
+        {gridEditor}
+      </div>
+      {document.getElementById("testBg") &&
+        createPortal(
+          <BackgroundPick
+            gridId={data.id}
+            defaultBg={data.bgColor ?? undefined}
+          />,
+          document.getElementById("testBg") as Element,
+        )}
+    </div>
+  );
 }
 
 export default memo(Editor);

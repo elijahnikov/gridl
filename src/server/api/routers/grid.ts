@@ -1,5 +1,5 @@
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
-import { createGridSchema } from "../schemas/grid";
+import { createGridSchema, updateGridSchema } from "../schemas/grid";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { ratelimit } from "@/utils/ratelimit";
@@ -126,7 +126,7 @@ export const gridRouter = createTRPCRouter({
       });
       if (grid?.userId !== currentUserId)
         throw new TRPCError({ code: "UNAUTHORIZED" });
-      if (!grid) throw new TRPCError({ code: "NOT_FOUND" });
+      if (!grid) throw new TRPCError({ code: "UNAUTHORIZED" });
       if (currentUserId !== grid.userId) {
         throw new TRPCError({ code: "UNAUTHORIZED" });
       }
@@ -187,5 +187,23 @@ export const gridRouter = createTRPCRouter({
         },
       });
       return true;
+    }),
+  //
+  // UPDATE: Update grid look and feel
+  //
+  updateGrid: protectedProcedure
+    .input(updateGridSchema)
+    .mutation(async ({ ctx, input }) => {
+      const { id, ...rest } = input;
+      const currentUser = ctx.session.user;
+      await ctx.db.grid.update({
+        where: {
+          id,
+          userId: currentUser.id,
+        },
+        data: {
+          ...rest,
+        },
+      });
     }),
 });

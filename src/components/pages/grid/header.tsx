@@ -3,17 +3,28 @@ import { Copy } from "lucide-react";
 import Link from "next/link";
 import { useMemo } from "react";
 import AddLink from "./add-link";
+import { type RouterOutputs } from "@/trpc/shared";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/lib/ui/hover-card";
+import { ColorWheel } from "gradiently";
+import { HexColorPicker } from "react-colorful";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/lib/ui/tabs";
 
 export default function GridProjectHeader({
   name,
   slug,
   user,
   page,
+  grid,
 }: {
   name: string;
   slug: string;
   user: string;
   page: "editor" | "project" | null;
+  grid: RouterOutputs["grid"]["gridForEditing"];
 }) {
   const secondary = useMemo(() => {
     if (!page) {
@@ -22,6 +33,7 @@ export default function GridProjectHeader({
     if (page === "editor") {
       return (
         <div className="flex space-x-4">
+          <div id="testBg"></div>
           <AddLink slug={slug} />
           <Button className="w-[180px]">Save</Button>
         </div>

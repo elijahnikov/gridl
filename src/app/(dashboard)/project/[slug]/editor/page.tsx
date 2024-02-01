@@ -25,21 +25,24 @@ export default function GridEditorPage() {
   return (
     <>
       <div className="z-10 flex h-20 w-full border-b bg-white">
-        <div className="flex w-full items-center justify-between px-[50px] ">
+        <div className="flex w-full items-center justify-between px-[50px]">
           {isLoading ? (
             <LoadingSpinner size={30} />
           ) : (
-            <GridProjectHeader
-              page={"editor"}
-              name={String(data?.name)}
-              slug={String(data?.slug)}
-              user={String(session?.user.name)}
-            />
+            <>
+              <GridProjectHeader
+                grid={data!}
+                page={"editor"}
+                name={String(data?.name)}
+                slug={String(data?.slug)}
+                user={String(session?.user.name)}
+              />
+            </>
           )}
         </div>
       </div>
-      <div className=" max-h-[1080px] w-full max-w-[1920px] px-12">
-        <div className="my-10">{data && <Editor data={data} />}</div>
+      <div className="w-full max-w-[1920px] px-4">
+        <div className="my-4">{data && <Editor data={data} />}</div>
       </div>
     </>
   );
