@@ -1,5 +1,5 @@
 import Favicon from "@/components/common/favicon";
-import { type LayoutType } from "./editor";
+import { type LayoutType } from "./editor/editor-container";
 import { linksRenderMap } from "@/utils/linksMap";
 import { memo } from "react";
 

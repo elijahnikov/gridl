@@ -1,7 +1,7 @@
 "use client";
 
 import LoadingSpinner from "@/components/common/loading-spinner";
-import Editor from "@/components/pages/grid/editor";
+import EditorContainer from "@/components/pages/grid/editor/editor-container";
 import GridProjectHeader from "@/components/pages/grid/header";
 
 import { api } from "@/trpc/react";
@@ -42,7 +42,7 @@ export default function GridEditorPage() {
         </div>
       </div>
       <div className="w-full max-w-[1920px] px-4">
-        <div className="my-4">{data && <Editor data={data} />}</div>
+        <div className="my-4">{data && <EditorContainer data={data} />}</div>
       </div>
     </>
   );

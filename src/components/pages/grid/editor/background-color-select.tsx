@@ -1,39 +1,25 @@
-import { Button } from "@/lib/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/lib/ui/popover";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/lib/ui/tabs";
-import { api } from "@/trpc/react";
 import { ColorWheel } from "gradiently";
-import { useState } from "react";
 import { HexColorPicker } from "react-colorful";
 
 export default function BackgroundPick({
   defaultBg,
-  gridId,
+  setBackgroundColor,
 }: {
   defaultBg?: string;
-  gridId: string;
+  setBackgroundColor: React.Dispatch<React.SetStateAction<string | undefined>>;
 }) {
-  const [intermediateColor, setIntermediateColor] = useState<
-    string | undefined
-  >(defaultBg);
-
-  const trpcUtils = api.useUtils();
-  const { mutate } = api.grid.updateGrid.useMutation({
-    onSuccess: () => {
-      void trpcUtils.grid.gridForEditing.refetch();
-    },
-  });
-
   return (
     <Popover
       onOpenChange={() => {
-        setIntermediateColor(defaultBg);
+        setBackgroundColor(defaultBg ?? undefined);
       }}
     >
       <PopoverTrigger>
         <div
           style={{
-            background: intermediateColor ?? "white",
+            background: defaultBg ?? "none",
           }}
           className="flex h-10 w-20 cursor-pointer rounded-lg border bg-white shadow-md"
         />
@@ -52,20 +38,14 @@ export default function BackgroundPick({
             <TabsContent className="flex justify-center" value="account">
               <ColorWheel
                 pickers={2}
-                onChange={setIntermediateColor}
+                onChange={setBackgroundColor}
                 radius={100}
               />
             </TabsContent>
             <TabsContent className="flex justify-center" value="password">
-              <HexColorPicker onChange={setIntermediateColor} />
+              <HexColorPicker onChange={setBackgroundColor} />
             </TabsContent>
           </Tabs>
-          <Button
-            className="mt-5 w-full"
-            onClick={() => mutate({ id: gridId, bgColor: intermediateColor })}
-          >
-            Save
-          </Button>
         </div>
       </PopoverContent>
     </Popover>

@@ -4,21 +4,13 @@ import Link from "next/link";
 import { useMemo } from "react";
 import AddLink from "./add-link";
 import { type RouterOutputs } from "@/trpc/shared";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@/lib/ui/hover-card";
-import { ColorWheel } from "gradiently";
-import { HexColorPicker } from "react-colorful";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/lib/ui/tabs";
 
 export default function GridProjectHeader({
   name,
   slug,
   user,
   page,
-  grid,
+  // grid,
 }: {
   name: string;
   slug: string;
@@ -33,9 +25,9 @@ export default function GridProjectHeader({
     if (page === "editor") {
       return (
         <div className="flex space-x-4">
-          <div id="testBg"></div>
+          <div id="backgroundPick" />
           <AddLink slug={slug} />
-          <Button className="w-[180px]">Save</Button>
+          <div id="saving" />
         </div>
       );
     }

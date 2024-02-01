@@ -8,7 +8,10 @@ import { createPortal } from "react-dom";
 import { Responsive, WidthProvider } from "react-grid-layout";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
-import BackgroundPick from "./editor/background-color-select";
+import BackgroundPick from "./background-color-select";
+import { Button } from "@/lib/ui/button";
+import { api } from "@/trpc/react";
+import { toast } from "sonner";
 
 const propertiesToDelete = [
   "type",
@@ -35,10 +38,23 @@ export type LayoutType = {
 
 type ResizeHandle = "s" | "w" | "e" | "n" | "sw" | "nw" | "se" | "ne";
 
-function Editor({ data }: { data: RouterOutputs["grid"]["gridForEditing"] }) {
-  const ResponsiveGridLayout = WidthProvider(Responsive);
+function EditorContainer({
+  data,
+}: {
+  data: RouterOutputs["grid"]["gridForEditing"];
+}) {
+  const [intermediateColor, setIntermediateColor] = useState<
+    string | undefined
+  >(data.bgColor ?? "white");
 
+  const [isSaving, setIsSaving] = useState<boolean>(false);
   const [parsedLayout, setParsedLayout] = useState<LayoutType[]>([]);
+
+  const { mutate } = api.gridItem.updateGridItems.useMutation({
+    onSuccess: () => {
+      toast.success("Updated your grid! 🚀");
+    },
+  });
 
   const layouts = useMemo(() => {
     return {
@@ -61,21 +77,33 @@ function Editor({ data }: { data: RouterOutputs["grid"]["gridForEditing"] }) {
           i: grid.id,
           resizeHandles: ["se", "nw", "sw", "ne"] as ResizeHandle[],
           ...grid,
-          ...linksRenderMap.find((item) => item.slug === grid.slug)
-            ?.extraLayoutProps,
+          ...(grid.type === "basicLink"
+            ? linksRenderMap.find((item) => item.type === grid.type)
+            : linksRenderMap.find((item) => item.slug === grid.slug)
+          )?.extraLayoutProps,
         };
       }) ?? [];
     setParsedLayout(reshapedLayout);
   }, [data]);
 
+  const onLayoutChangeHandler = (e: ReactGridLayout.Layout[]) => {
+    setIsSaving(true);
+    setTimeout(() => {
+      console.log(e);
+      // mutate({});
+      setIsSaving(false);
+    }, 1500);
+  };
+
   const gridEditor = useMemo(() => {
+    const ResponsiveGridLayout = WidthProvider(Responsive);
+
     return (
       <ResponsiveGridLayout
-        // onDrop={(e, r, t) => onDrop(e, r, t, selectedOnDropItem)}
         isDroppable={true}
-        // compactType={"horizontal"}
         layouts={layouts}
-        // onLayoutChange={(e) => console.log({ e })}
+        onDragStop={onLayoutChangeHandler}
+        onResizeStop={onLayoutChangeHandler}
         cols={{
           lg: 200,
           md: 200,
@@ -100,7 +128,7 @@ function Editor({ data }: { data: RouterOutputs["grid"]["gridForEditing"] }) {
               key={l.i}
             >
               {l.type === "basicLink" ? (
-                <div className="flex items-center justify-center space-x-2">
+                <div className="flex items-center justify-center space-x-2 truncate">
                   <Favicon size={20} url={l.url!} />
                   <span>{l.name}</span>
                 </div>
@@ -114,26 +142,37 @@ function Editor({ data }: { data: RouterOutputs["grid"]["gridForEditing"] }) {
       </ResponsiveGridLayout>
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ResponsiveGridLayout, layouts, parsedLayout]);
+  }, [layouts, parsedLayout]);
 
   return (
     <div>
       <div
-        style={{ background: data.bgColor ?? "none" }}
+        style={{ background: intermediateColor ?? "none" }}
         className="min-h-[80vh] rounded-md"
       >
         {gridEditor}
       </div>
-      {document.getElementById("testBg") &&
+      {document.getElementById("backgroundPick") &&
         createPortal(
-          <BackgroundPick
-            gridId={data.id}
-            defaultBg={data.bgColor ?? undefined}
-          />,
-          document.getElementById("testBg") as Element,
+          <>
+            <BackgroundPick
+              setBackgroundColor={setIntermediateColor}
+              defaultBg={intermediateColor}
+            />
+          </>,
+          document.getElementById("backgroundPick") as Element,
+        )}
+      {document.getElementById("saving") &&
+        createPortal(
+          <>
+            <Button disabled={isSaving} className="w-[180px]">
+              {isSaving ? "Saving..." : "Save"}
+            </Button>
+          </>,
+          document.getElementById("saving") as Element,
         )}
     </div>
   );
 }
 
-export default memo(Editor);
+export default memo(EditorContainer);

@@ -118,5 +118,9 @@ export const linksRenderMap = [
         <p>{name}</p>
       </div>
     ),
+    extraLayoutProps: {
+      minH: 4,
+      minW: 25,
+    },
   },
 ] as Array<LinksRenderMapType>;

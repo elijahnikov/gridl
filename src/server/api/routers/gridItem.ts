@@ -105,6 +105,14 @@ export const gridItemRouter = createTRPCRouter({
       });
     }),
   //
+  // UPDATE: Update many grid items
+  //
+  updateGridItems: protectedProcedure
+    .input(z.object({}))
+    .mutation(async ({ ctx, input }) => {
+      return false;
+    }),
+  //
   // DELETE: Delete grid item
   //
   delete: protectedProcedure
