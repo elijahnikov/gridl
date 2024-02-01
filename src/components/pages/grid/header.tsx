@@ -3,20 +3,17 @@ import { Copy } from "lucide-react";
 import Link from "next/link";
 import { useMemo } from "react";
 import AddLink from "./add-link";
-import { type RouterOutputs } from "@/trpc/shared";
 
 export default function GridProjectHeader({
   name,
   slug,
   user,
   page,
-  // grid,
 }: {
   name: string;
   slug: string;
   user: string;
   page: "editor" | "project" | null;
-  grid: RouterOutputs["grid"]["gridForEditing"];
 }) {
   const secondary = useMemo(() => {
     if (!page) {

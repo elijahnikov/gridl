@@ -31,7 +31,6 @@ export default function GridEditorPage() {
           ) : (
             <>
               <GridProjectHeader
-                grid={data!}
                 page={"editor"}
                 name={String(data?.name)}
                 slug={String(data?.slug)}
