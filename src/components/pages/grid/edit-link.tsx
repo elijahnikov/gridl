@@ -40,23 +40,29 @@ import { DialogDescription } from "@radix-ui/react-dialog";
 import LoadingSpinner from "@/components/common/loading-spinner";
 import MultipleSelector from "@/lib/ui/fancy-select";
 import { type GridCell } from "./grid-cell-list/grid-cell-list";
+import { ContextMenuItem } from "@/lib/ui/context-menu";
 
 const formSchema = createGridItemSchema.omit({ gridSlug: true });
 
 export default function EditLink({
   gridItem,
   fromDropdown,
+  fromContext,
+  onSuccessCallback,
 }: {
   slug: string;
-  gridItem: GridCell;
+  gridItem: Omit<GridCell, "_count">;
   fromDropdown?: boolean;
+  fromContext?: boolean;
+  onSuccessCallback?: () => void;
 }) {
   const [open, setOpen] = useState<boolean>(false);
 
   const trpcUtils = api.useUtils();
   const { mutate } = api.gridItem.updateGridItem.useMutation({
     onSuccess() {
-      void trpcUtils.gridItem.gridItems.invalidate();
+      if (onSuccessCallback) onSuccessCallback();
+      else void trpcUtils.gridItem.gridItems.invalidate();
       toast.success("Successfully updated your link");
       setOpen(false);
     },
@@ -120,6 +126,10 @@ export default function EditLink({
           <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
             Edit
           </DropdownMenuItem>
+        ) : fromContext ? (
+          <ContextMenuItem onSelect={(e) => e.preventDefault()}>
+            Edit
+          </ContextMenuItem>
         ) : (
           <Button variant={"outline"}>Add Link</Button>
         )}

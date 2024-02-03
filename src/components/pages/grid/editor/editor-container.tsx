@@ -13,17 +13,7 @@ import { Button } from "@/lib/ui/button";
 import { api } from "@/trpc/react";
 import { toast } from "sonner";
 import _ from "lodash";
-
-const propertiesToDelete = [
-  "type",
-  "url",
-  "text",
-  "id",
-  "gridId",
-  "bgColor",
-  "tags",
-  "name",
-];
+import Cell from "./cell";
 
 export type LayoutType = {
   type: string;
@@ -35,6 +25,9 @@ export type LayoutType = {
   id: string;
   gridId: string;
   slug: string;
+  tags: string | null;
+  createdAt: Date;
+  updatedAt: Date;
 } & ReactGridLayout.Layout;
 
 type ResizeHandle = "s" | "w" | "e" | "n" | "sw" | "nw" | "se" | "ne";
@@ -66,11 +59,6 @@ function EditorContainer({
     return {
       lg: parsedLayout.map((obj) => {
         const newObj = { ...obj };
-        propertiesToDelete.forEach((prop) => {
-          if (newObj.hasOwnProperty(prop)) {
-            delete newObj[prop as keyof typeof newObj];
-          }
-        });
         return newObj;
       }),
     };
@@ -79,6 +67,7 @@ function EditorContainer({
   useEffect(() => {
     const reshapedLayout =
       data.gridItems.map((grid) => {
+        console.log({ grid });
         return {
           i: grid.id,
           resizeHandles: ["se", "nw", "sw", "ne"] as ResizeHandle[],
@@ -131,22 +120,11 @@ function EditorContainer({
               style={{
                 backgroundColor: l.bgColor ?? "none",
                 color: l.textColor ?? "black",
-                display: "flex",
-                justifyContent: "center",
               }}
-              className="rounded-2xl"
+              className="flex justify-center rounded-2xl"
               key={l.i}
             >
-              {l.type === "basicLink" ? (
-                <div className="flex items-center justify-center space-x-2 truncate">
-                  <Favicon size={20} url={l.url!} />
-                  <span>{l.name}</span>
-                </div>
-              ) : (
-                linksRenderMap
-                  .find((item) => item.slug === l.slug)
-                  ?.render(l.url!)
-              )}
+              <Cell l={l} editMode={true} />
             </div>
           ))}
       </ResponsiveGridLayout>

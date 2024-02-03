@@ -82,6 +82,7 @@ export default function AddLink({ slug }: { slug: string }) {
   }, [url]);
 
   useEffect(() => {
+    form.setValue("bgColor", undefined);
     if (typeof linkComponent !== "undefined") {
       form.setValue("slug", linkComponent.slug);
       form.setValue("type", linkComponent.type);
