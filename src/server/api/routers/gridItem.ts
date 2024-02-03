@@ -37,6 +37,7 @@ export const gridItemRouter = createTRPCRouter({
           where: {
             gridId: grid.id,
           },
+          orderBy: [{ createdAt: "asc" }],
           include: {
             _count: {
               select: {

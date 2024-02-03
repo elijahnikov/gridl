@@ -17,7 +17,7 @@ export default function GridCellListFilter({
   gridItems: GridCell[];
   setFilteredDataArray: React.Dispatch<React.SetStateAction<GridCell[]>>;
 }) {
-  const [sortOrder, setSortOrder] = useState<string>("name");
+  const [sortOrder, setSortOrder] = useState<string>("createdAt");
   const [searchValue, setSearchValue] = useState<string>("");
   const [domainsFilter, setDomainsFilter] = useState<Option[]>([]);
   const [tagsFilter, setTagsFilter] = useState<Option[]>([]);

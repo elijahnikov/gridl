@@ -25,12 +25,8 @@ export default function GridCard({
         >
           <div className="flex w-full flex-col space-y-2.5">
             <div
-              style={{ backgroundColor: grid.bgColor ? grid.bgColor : "white" }}
-              className={cn(
-                grid.bgColor === "white" ||
-                  (grid.bgColor === "#ffffff" && "border"),
-                "h-24 w-full rounded-md p-3",
-              )}
+              style={{ background: grid.bgColor ?? "white" }}
+              className={cn("h-24 w-full rounded-md border p-3")}
             >
               {grid.default && (
                 <DefaultBadge username={String(grid.user.name)} />
