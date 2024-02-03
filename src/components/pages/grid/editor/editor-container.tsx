@@ -12,6 +12,7 @@ import BackgroundPick from "./background-color-select";
 import { Button } from "@/lib/ui/button";
 import { api } from "@/trpc/react";
 import { toast } from "sonner";
+import _ from "lodash";
 
 const propertiesToDelete = [
   "type",
@@ -26,7 +27,7 @@ const propertiesToDelete = [
 
 export type LayoutType = {
   type: string;
-  name: string | null;
+  name: string;
   url: string | null;
   text: string | null;
   bgColor: string | null;
@@ -47,14 +48,19 @@ function EditorContainer({
     string | undefined
   >(data.bgColor ?? "white");
 
-  const [isSaving, setIsSaving] = useState<boolean>(false);
   const [parsedLayout, setParsedLayout] = useState<LayoutType[]>([]);
+  const [updatedLayout, setUpdatedLayout] = useState<LayoutType[]>([]);
+  const [hasModified, setHasModified] = useState<boolean>(false);
 
-  const { mutate } = api.gridItem.updateGridItems.useMutation({
+  const { mutate, isLoading } = api.gridItem.updateGridItems.useMutation({
     onSuccess: () => {
-      toast.success("Updated your grid! 🚀");
+      toast.success("Updated your grid! 🚀", {
+        duration: 2000,
+      });
     },
   });
+  const { mutate: updateBg, isLoading: updateBgIsLoading } =
+    api.grid.updateGrid.useMutation();
 
   const layouts = useMemo(() => {
     return {
@@ -84,15 +90,19 @@ function EditorContainer({
         };
       }) ?? [];
     setParsedLayout(reshapedLayout);
-  }, [data]);
+    setUpdatedLayout(reshapedLayout);
+  }, [data, mutate]);
 
   const onLayoutChangeHandler = (e: ReactGridLayout.Layout[]) => {
-    setIsSaving(true);
-    setTimeout(() => {
-      console.log(e);
-      // mutate({});
-      setIsSaving(false);
-    }, 1500);
+    const updatedArray = parsedLayout.map((obj2) => {
+      const matchingObject = e.find((obj1) => obj1.i === obj2.i);
+      if (matchingObject) {
+        const { h, w, x, y } = matchingObject;
+        return { ...obj2, h, w, x, y };
+      }
+      return obj2;
+    });
+    setUpdatedLayout(updatedArray);
   };
 
   const gridEditor = useMemo(() => {
@@ -144,6 +154,17 @@ function EditorContainer({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [layouts, parsedLayout]);
 
+  useEffect(() => {
+    if (
+      !_.isEqual(parsedLayout, updatedLayout) ||
+      !_.isEqual(data.bgColor, intermediateColor)
+    ) {
+      setHasModified(true);
+    } else {
+      setHasModified(false);
+    }
+  }, [data.bgColor, intermediateColor, parsedLayout, updatedLayout]);
+
   return (
     <div>
       <div
@@ -165,8 +186,16 @@ function EditorContainer({
       {document.getElementById("saving") &&
         createPortal(
           <>
-            <Button disabled={isSaving} className="w-[180px]">
-              {isSaving ? "Saving..." : "Save"}
+            <Button
+              onClick={() => {
+                mutate(updatedLayout);
+                updateBg({ id: data.id, bgColor: intermediateColor });
+                setHasModified(false);
+              }}
+              disabled={isLoading || updateBgIsLoading || !hasModified}
+              className="w-[180px]"
+            >
+              {isLoading || updateBgIsLoading ? "Saving..." : "Save"}
             </Button>
           </>,
           document.getElementById("saving") as Element,

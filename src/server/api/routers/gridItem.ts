@@ -1,6 +1,9 @@
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
-import { createGridItemSchema } from "../schemas/gridItem";
+import {
+  createGridItemSchema,
+  updateGridItemsSchema,
+} from "../schemas/gridItem";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
@@ -108,9 +111,16 @@ export const gridItemRouter = createTRPCRouter({
   // UPDATE: Update many grid items
   //
   updateGridItems: protectedProcedure
-    .input(z.object({}))
+    .input(updateGridItemsSchema)
     .mutation(async ({ ctx, input }) => {
-      return false;
+      return ctx.db.$transaction(async (tx) => {
+        for (const item of input) {
+          await tx.gridItem.update({
+            where: { id: item.id, gridId: item.gridId },
+            data: { ...item },
+          });
+        }
+      });
     }),
   //
   // DELETE: Delete grid item

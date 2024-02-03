@@ -83,7 +83,7 @@ model Grid {
 model GridItem {
     id String @id @default(cuid())
 
-    name      String?
+    name      String
     type      String
     slug      String
     url       String?
