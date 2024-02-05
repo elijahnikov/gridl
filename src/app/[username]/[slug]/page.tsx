@@ -1,9 +1,19 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import Layout from "@/components/common/page-layout";
+import ViewGrid from "@/components/pages/grid/view/view-grid";
+import { Card } from "@/lib/ui/card";
+import { useGetGridForViewing } from "@/utils/getGrids";
 
 export default function GridViewPage() {
-  const params = useParams();
-
-  return <h1>hello there</h1>;
+  const { data } = useGetGridForViewing();
+  return (
+    <Layout showNav={false}>
+      <div className="flex min-h-screen flex-col items-center justify-center p-4">
+        <Card className="mx-auto h-full w-full justify-center text-center">
+          {data && <ViewGrid data={data} />}
+        </Card>
+      </div>
+    </Layout>
+  );
 }

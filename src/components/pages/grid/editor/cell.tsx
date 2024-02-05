@@ -35,10 +35,13 @@ export default function Cell({
   const cell = (
     <div className="flex justify-center">
       {l.type === "basicLink" ? (
-        <div className="flex items-center justify-center space-x-2 truncate">
+        <a
+          href={l.url!}
+          className="flex items-center justify-center space-x-2 truncate"
+        >
           <Favicon size={20} url={l.url!} />
           <span className="text-sm">{l.name}</span>
-        </div>
+        </a>
       ) : (
         linksRenderMap.find((item) => item.slug === l.slug)?.render(l.url!)
       )}

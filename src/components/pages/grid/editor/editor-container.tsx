@@ -12,8 +12,8 @@ import { Button } from "@/lib/ui/button";
 import { api } from "@/trpc/react";
 import { toast } from "sonner";
 import _ from "lodash";
-import Cell from "./cell";
 import { cn } from "@/lib/utils";
+import Cell from "./cell";
 
 export type LayoutType = {
   type: string;
