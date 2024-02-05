@@ -1,7 +1,7 @@
 import Favicon from "@/components/common/favicon";
 import { type LayoutType } from "./editor-container";
 import { linksRenderMap } from "@/utils/linksMap";
-import { Move, Pencil, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import {
   ContextMenu,
   ContextMenuTrigger,
@@ -31,44 +31,36 @@ export default function Cell({
       );
     },
   });
-  if (!editMode) {
-    return (
-      <>
-        <div className="flex justify-center">
-          {l.type === "basicLink" ? (
-            <div className="flex items-center justify-center space-x-2 truncate">
-              <Favicon size={20} url={l.url!} />
-              <span>{l.name}</span>
-            </div>
-          ) : (
-            linksRenderMap.find((item) => item.slug === l.slug)?.render(l.url!)
-          )}
+
+  const cell = (
+    <div className="flex justify-center">
+      {l.type === "basicLink" ? (
+        <div className="flex items-center justify-center space-x-2 truncate">
+          <Favicon size={20} url={l.url!} />
+          <span className="text-sm">{l.name}</span>
         </div>
-      </>
-    );
+      ) : (
+        linksRenderMap.find((item) => item.slug === l.slug)?.render(l.url!)
+      )}
+    </div>
+  );
+  if (!editMode) {
+    return cell;
   }
   return (
     <>
-      <div className="absolute rounded-full border bg-white p-1 shadow-lg">
-        <Move className="text-black" size={20} />
-      </div>
       <ContextMenu>
-        <ContextMenuTrigger className="flex justify-center">
+        <ContextMenuTrigger
+          onClick={(e) => e.preventDefault()}
+          className="flex justify-center"
+        >
           <div className="absolute left-0 flex h-full w-full" />
-          <div className="flex justify-center">
-            {l.type === "basicLink" ? (
-              <div className="flex items-center justify-center space-x-2 truncate">
-                <Favicon size={20} url={l.url!} />
-                <span>{l.name}</span>
-              </div>
-            ) : (
-              linksRenderMap
-                .find((item) => item.slug === l.slug)
-                ?.render(l.url!)
-            )}
-          </div>
+          {cell}
         </ContextMenuTrigger>
-        <ContextMenuContent>
+        <ContextMenuContent
+          hideWhenDetached
+          onClick={(e) => e.preventDefault()}
+        >
           <EditLink
             onSuccessCallback={() => trpcUtils.grid.gridForEditing.invalidate()}
             fromContext

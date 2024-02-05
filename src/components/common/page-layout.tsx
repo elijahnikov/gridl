@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname, useRouter } from "next/navigation";
 import Nav from "./nav";
 import { cn } from "@/lib/utils";
 
@@ -8,6 +9,9 @@ interface LayoutProps {
 }
 
 export default function Layout({ children }: LayoutProps) {
+  const test = usePathname();
+  const router = useRouter();
+  console.log({ test, router: router });
   return (
     <div className="flex flex-row flex-col">
       <div className="sticky top-0 z-20">

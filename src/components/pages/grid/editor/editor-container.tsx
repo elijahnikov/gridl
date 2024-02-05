@@ -1,6 +1,5 @@
 "use client";
 
-import Favicon from "@/components/common/favicon";
 import { type RouterOutputs } from "@/trpc/shared";
 import { linksRenderMap } from "@/utils/linksMap";
 import { memo, useEffect, useMemo, useState } from "react";
@@ -14,6 +13,7 @@ import { api } from "@/trpc/react";
 import { toast } from "sonner";
 import _ from "lodash";
 import Cell from "./cell";
+import { cn } from "@/lib/utils";
 
 export type LayoutType = {
   type: string;
@@ -47,7 +47,7 @@ function EditorContainer({
 
   const { mutate, isLoading } = api.gridItem.updateGridItems.useMutation({
     onSuccess: () => {
-      toast.success("Updated your grid! 🚀", {
+      toast.success("Successfully updated your grid!", {
         duration: 2000,
       });
     },
@@ -67,10 +67,18 @@ function EditorContainer({
   useEffect(() => {
     const reshapedLayout =
       data.gridItems.map((grid) => {
-        console.log({ grid });
         return {
           i: grid.id,
-          resizeHandles: ["se", "nw", "sw", "ne"] as ResizeHandle[],
+          resizeHandles: [
+            "se",
+            "nw",
+            "sw",
+            "ne",
+            "n",
+            "e",
+            "s",
+            "w",
+          ] as ResizeHandle[],
           ...grid,
           ...(grid.type === "basicLink"
             ? linksRenderMap.find((item) => item.type === grid.type)
@@ -80,7 +88,7 @@ function EditorContainer({
       }) ?? [];
     setParsedLayout(reshapedLayout);
     setUpdatedLayout(reshapedLayout);
-  }, [data, mutate]);
+  }, [data]);
 
   const onLayoutChangeHandler = (e: ReactGridLayout.Layout[]) => {
     const updatedArray = parsedLayout.map((obj2) => {
@@ -96,20 +104,13 @@ function EditorContainer({
 
   const gridEditor = useMemo(() => {
     const ResponsiveGridLayout = WidthProvider(Responsive);
-
     return (
       <ResponsiveGridLayout
-        isDroppable={true}
         layouts={layouts}
         onDragStop={onLayoutChangeHandler}
         onResizeStop={onLayoutChangeHandler}
-        cols={{
-          lg: 200,
-          md: 200,
-          sm: 200,
-          xs: 1,
-          xxs: 1,
-        }}
+        breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
+        cols={{ lg: 200, md: 150, sm: 100, xs: 50, xxs: 25 }}
         rowHeight={1}
         draggableCancel=".cancelSelectorName"
         useCSSTransforms={true}
@@ -121,7 +122,10 @@ function EditorContainer({
                 backgroundColor: l.bgColor ?? "none",
                 color: l.textColor ?? "black",
               }}
-              className="flex justify-center rounded-2xl"
+              className={cn(
+                l.type === "basicLink" && "shadow-[0px_0px_5px_1px_#00000024]",
+                "flex justify-center rounded-xl",
+              )}
               key={l.i}
             >
               <Cell l={l} editMode={true} />

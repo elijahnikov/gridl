@@ -19,6 +19,7 @@ import {
   BsYoutube,
 } from "react-icons/bs";
 import { FaSoundcloud } from "react-icons/fa";
+import { cn } from "@/lib/utils";
 
 export const linkTypes = ["social", "music", "basicLink"] as const;
 type LinkTypesIndex = (typeof linkTypes)[number];
@@ -44,6 +45,19 @@ export type LinksRenderMapType = {
   icon: React.ReactNode;
 };
 
+function EmbedContainer({ children }: { children: React.ReactNode }) {
+  return (
+    <div
+      className={cn(
+        "h-max w-max rounded-xl",
+        "shadow-[0px_0px_5px_1px_#00000024]",
+      )}
+    >
+      {children}
+    </div>
+  );
+}
+
 export const linksRenderMap = [
   //
   // SOCIAL MEDIA
@@ -51,42 +65,66 @@ export const linksRenderMap = [
   {
     type: "social",
     slug: "twitter",
-    render: (url) => <TwitterEmbed url={url} />,
+    render: (url) => (
+      <EmbedContainer>
+        <TwitterEmbed url={url} />
+      </EmbedContainer>
+    ),
     name: "Twitter/X",
     icon: <BsTwitter size={25} />,
   },
   {
     type: "social",
     slug: "tiktok",
-    render: (url) => <TikTokEmbed url={url} width={"100%"} />,
+    render: (url) => (
+      <EmbedContainer>
+        <TikTokEmbed url={url} width={"100%"} />
+      </EmbedContainer>
+    ),
     name: "TikTok",
     icon: <BsTiktok size={25} />,
   },
   {
     type: "social",
     slug: "instagram",
-    render: (url) => <InstagramEmbed igVersion="1" url={url} width={"100%"} />,
+    render: (url) => (
+      <EmbedContainer>
+        <InstagramEmbed igVersion="1" url={url} width={"100%"} />
+      </EmbedContainer>
+    ),
     name: "Instagram",
     icon: <BsInstagram size={25} />,
   },
   {
     type: "social",
     slug: "youtube",
-    render: (url) => <YouTubeEmbed url={url} width={400} height={200} />,
+    render: (url) => (
+      <EmbedContainer>
+        <YouTubeEmbed url={url} width={400} height={200} />
+      </EmbedContainer>
+    ),
     name: "YouTube",
     icon: <BsYoutube size={25} />,
   },
   {
     type: "social",
     slug: "pinterest",
-    render: (url) => <PinterestEmbed url={url} />,
+    render: (url) => (
+      <EmbedContainer>
+        <PinterestEmbed url={url} />
+      </EmbedContainer>
+    ),
     name: "Pinterest",
     icon: <BsPinterest size={25} />,
   },
   {
     type: "social",
     slug: "linkedin",
-    render: (url) => <LinkedInEmbed url={url} width={"100%"} />,
+    render: (url) => (
+      <EmbedContainer>
+        <LinkedInEmbed url={url} width={"100%"} />
+      </EmbedContainer>
+    ),
     name: "LinkedIn",
     icon: <BsLinkedin size={25} />,
   },
@@ -96,7 +134,11 @@ export const linksRenderMap = [
   {
     type: "music",
     slug: "spotify",
-    render: (url) => <Spotify link={url} />,
+    render: (url) => (
+      <EmbedContainer>
+        <Spotify className="-mb-[28px]" link={url} />
+      </EmbedContainer>
+    ),
     name: "Spotify",
     icon: <BsSpotify size={25} />,
   },

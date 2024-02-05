@@ -1,5 +1,6 @@
 "use client";
 
+import Favicon from "@/components/common/favicon";
 import LoadingSpinner from "@/components/common/loading-spinner";
 import { Button } from "@/lib/ui/button";
 import {
@@ -328,7 +329,7 @@ export function Preview({
 
   if (url && stringIsValidURL(url) && linkComponent) {
     preview = (
-      <div className="w-[80%]">
+      <div className="flex h-max w-max justify-center">
         {url && linkComponent && linkComponent.render(url)}
       </div>
     );
@@ -341,9 +342,10 @@ export function Preview({
           backgroundColor: bgColor ?? "#ffffff",
           color: textColor ?? "#000000",
         }}
-        className="flex max-w-full flex-col rounded-md px-3 py-2 text-left"
+        className="flex max-w-full items-center justify-center space-x-2 rounded-md px-3 py-2 text-left shadow-[0px_0px_5px_1px_#00000024]"
       >
-        <h1 className="text-left font-semibold">{name}</h1>
+        <Favicon size={20} url={url} />
+        <h1 className="text-left text-sm">{name}</h1>
       </div>
     );
   }

@@ -50,7 +50,9 @@ export default function GridProjectHeader({
 
   return (
     <div className="flex w-full justify-between">
-      <h1 className="px-2 text-2xl font-semibold text-slate-700">{name}</h1>
+      <h1 className="my-auto items-center justify-center px-2 text-2xl font-semibold text-slate-700">
+        {name}
+      </h1>
       {secondary}
     </div>
   );

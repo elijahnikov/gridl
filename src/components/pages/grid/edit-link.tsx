@@ -113,14 +113,19 @@ export default function EditLink({
   }, [form, linkComponent, url]);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values.tags);
     mutate({
       ...values,
       gridItemId: gridItem.id,
     });
   }
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog
+      open={open}
+      onOpenChange={(val) => {
+        setOpen(val);
+      }}
+    >
       <DialogTrigger asChild>
         {fromDropdown ? (
           <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
@@ -134,7 +139,7 @@ export default function EditLink({
           <Button variant={"outline"}>Add Link</Button>
         )}
       </DialogTrigger>
-      <DialogContent className="max-h-[95vh] w-[900px] max-w-[900px] overflow-y-auto">
+      <DialogContent className="cancelSelectorName max-h-[95vh] w-[900px] max-w-[900px] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Edit link</DialogTitle>
           <DialogDescription className="text-sm text-slate-600">

@@ -1,11 +1,11 @@
 import { api } from "@/trpc/react";
 
 export function getGridBySlug(slug: string) {
-  const { data, isLoading } = api.grid.gridForEditing.useQuery({
+  const { data, isLoading, error } = api.grid.gridForEditing.useQuery({
     slug,
   });
 
-  return { data, isLoading };
+  return { data, isLoading, error };
 }
 
 export function getGridItemsBySlug(slug: string) {
