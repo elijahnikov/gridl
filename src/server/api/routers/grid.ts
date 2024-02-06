@@ -158,10 +158,24 @@ export const gridRouter = createTRPCRouter({
   //
   updateDefault: protectedProcedure
     .input(z.object({ id: z.string() }))
-    .query(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }) => {
       const ip = ipAddress(ctx.req as Request) ?? "unknown";
       const { success } = await ratelimit().limit(ip);
       if (!success) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
+
+      const existingDefault = await ctx.db.grid.findFirst({
+        where: {
+          id: input.id,
+          default: true,
+        },
+      });
+
+      if (existingDefault) {
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "This grid is already your default grid!",
+        });
+      }
 
       await ctx.db.$transaction([
         ctx.db.grid.updateMany({
