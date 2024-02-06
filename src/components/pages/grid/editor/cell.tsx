@@ -33,11 +33,11 @@ export default function Cell({
   });
 
   const cell = (
-    <div className="flex justify-center">
+    <div className="flex w-full justify-center">
       {l.type === "basicLink" ? (
         <a
           href={l.url!}
-          className="fade flex items-center justify-center space-x-2 truncate"
+          className="fade flex w-full items-center justify-center space-x-2 truncate"
         >
           <Favicon size={20} url={l.url!} />
           <span className="text-sm">{l.name}</span>
