@@ -67,7 +67,7 @@ export const linksRenderMap = [
     slug: "twitter",
     render: (url) => (
       <EmbedContainer>
-        <TwitterEmbed url={url} />
+        <TwitterEmbed width={"100%"} url={url} />
       </EmbedContainer>
     ),
     name: "Twitter/X",

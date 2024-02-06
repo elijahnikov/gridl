@@ -37,7 +37,7 @@ export default function Cell({
       {l.type === "basicLink" ? (
         <a
           href={l.url!}
-          className="flex items-center justify-center space-x-2 truncate"
+          className="fade flex items-center justify-center space-x-2 truncate"
         >
           <Favicon size={20} url={l.url!} />
           <span className="text-sm">{l.name}</span>
