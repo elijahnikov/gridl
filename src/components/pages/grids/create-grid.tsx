@@ -26,7 +26,7 @@ import { HexColorPicker } from "react-colorful";
 
 import { Plus } from "lucide-react";
 
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useForm, useWatch } from "react-hook-form";
 import { type z } from "zod";
 import { toast } from "sonner";
 import { DialogDescription } from "@radix-ui/react-dialog";
@@ -61,6 +61,11 @@ export default function CreateGrid() {
     });
   }
 
+  const [isDefaultChecked, slug] = useWatch({
+    control: form.control,
+    name: ["default", "slug"],
+  });
+
   function handleNameInputChange(value: string) {
     const formattedValue = value.replace(/[^\w\s]/g, "").replace(/\s+/g, "_");
     form.setValue("slug", formattedValue);
@@ -74,7 +79,7 @@ export default function CreateGrid() {
           <Plus size={18} className="ml-2" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="max-w-[400px] sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>Create new grid</DialogTitle>
           <DialogDescription className="text-sm text-slate-600">
@@ -135,7 +140,7 @@ export default function CreateGrid() {
                 control={form.control}
                 name="default"
                 render={({ field }) => (
-                  <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                  <FormItem className="flex flex-row items-start space-x-3 space-y-0 py-4">
                     <FormControl>
                       <Checkbox
                         checked={field.value}
@@ -145,16 +150,22 @@ export default function CreateGrid() {
                     <div className="space-y-1 leading-none">
                       <FormLabel>Set as default?</FormLabel>
                       <FormDescription>
-                        This grid will be shown to users that navigate to your
-                        default page:{" "}
-                        <span className="font-semibold">
-                          gridl.co/{session?.user.name}
-                        </span>
+                        {slug && (
+                          <span className=" space-x-1 text-sm">
+                            Your new grid will be found at
+                            <span className="ml-1 font-semibold">
+                              {isDefaultChecked
+                                ? `gridl.co/${session?.user.name}`
+                                : `gridl.co/${session?.user.name}/${slug}`}
+                            </span>
+                          </span>
+                        )}
                       </FormDescription>
                     </div>
                   </FormItem>
                 )}
               />
+
               <DialogFooter>
                 <div className="mt-5 flex w-full space-x-2">
                   <Button
