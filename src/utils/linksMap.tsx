@@ -164,8 +164,8 @@ export const linksRenderMap = [
         <p>{name}</p>
       </div>
     ),
-    defaultHeight: 8,
-    defaultWidth: 30,
+    defaultHeight: 5,
+    defaultWidth: 35,
     extraLayoutProps: {
       minH: 4,
       minW: 25,

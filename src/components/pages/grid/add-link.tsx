@@ -88,7 +88,6 @@ export default function AddLink({ slug }: { slug: string }) {
   }, [url]);
 
   useEffect(() => {
-    form.setValue("bgColor", undefined);
     if (typeof linkComponent !== "undefined") {
       (
         [
@@ -113,6 +112,13 @@ export default function AddLink({ slug }: { slug: string }) {
     } else if (typeof url !== "undefined") {
       form.setValue("slug", url.split(".")[1]!);
       form.setValue("type", "basicLink");
+      const defaults = linksRenderMap.find((link) => link.type === "basicLink");
+      (
+        [
+          { name: "h", value: defaults?.defaultHeight },
+          { name: "w", value: defaults?.defaultWidth },
+        ] as FormField[]
+      ).forEach(({ name, value }) => form.setValue(name, value));
     }
   }, [form, linkComponent, url]);
 
