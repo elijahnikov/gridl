@@ -11,6 +11,7 @@ import {
 import EditLink from "../edit-link";
 import { api } from "@/trpc/react";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 export default function Cell({
   l,
@@ -33,7 +34,12 @@ export default function Cell({
   });
 
   const cell = (
-    <div className="flex w-full justify-center">
+    <div
+      className={cn(
+        editMode && "pointer-events-none",
+        "flex w-full justify-center",
+      )}
+    >
       {l.type === "basicLink" ? (
         <a
           href={l.url!}
