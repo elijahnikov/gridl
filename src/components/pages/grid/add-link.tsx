@@ -43,6 +43,11 @@ import { type z } from "zod";
 
 const formSchema = createGridItemSchema;
 
+type FormField = {
+  name: keyof z.infer<typeof formSchema>;
+  value: string | number;
+};
+
 export default function AddLink({ slug }: { slug: string }) {
   const [open, setOpen] = useState<boolean>(false);
 
@@ -85,8 +90,26 @@ export default function AddLink({ slug }: { slug: string }) {
   useEffect(() => {
     form.setValue("bgColor", undefined);
     if (typeof linkComponent !== "undefined") {
-      form.setValue("slug", linkComponent.slug);
-      form.setValue("type", linkComponent.type);
+      (
+        [
+          {
+            name: "slug",
+            value: linkComponent.slug,
+          },
+          {
+            name: "type",
+            value: linkComponent.type,
+          },
+          {
+            name: "h",
+            value: linkComponent.defaultHeight ?? 10,
+          },
+          {
+            name: "w",
+            value: linkComponent.defaultWidth ?? 10,
+          },
+        ] as FormField[]
+      ).forEach(({ name, value }) => form.setValue(name, value));
     } else if (typeof url !== "undefined") {
       form.setValue("slug", url.split(".")[1]!);
       form.setValue("type", "basicLink");

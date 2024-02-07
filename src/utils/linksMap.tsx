@@ -43,6 +43,8 @@ export type LinksRenderMapType = {
   extraLayoutProps?: Partial<ReactGridLayout.Layout>;
   name: string;
   icon: React.ReactNode;
+  defaultHeight?: number;
+  defaultWidth?: number;
 };
 
 function EmbedContainer({ children }: { children: React.ReactNode }) {
@@ -72,6 +74,8 @@ export const linksRenderMap = [
     ),
     name: "Twitter/X",
     icon: <BsTwitter size={25} />,
+    defaultHeight: 43,
+    defaultWidth: 30,
   },
   {
     type: "social",
@@ -87,13 +91,11 @@ export const linksRenderMap = [
   {
     type: "social",
     slug: "instagram",
-    render: (url) => (
-      <EmbedContainer>
-        <InstagramEmbed igVersion="1" url={url} width={"100%"} />
-      </EmbedContainer>
-    ),
+    render: (url) => <InstagramEmbed igVersion="1" url={url} width={"100%"} />,
     name: "Instagram",
     icon: <BsInstagram size={25} />,
+    defaultHeight: 49,
+    defaultWidth: 39,
   },
   {
     type: "social",
@@ -141,6 +143,8 @@ export const linksRenderMap = [
     ),
     name: "Spotify",
     icon: <BsSpotify size={25} />,
+    defaultHeight: 33,
+    defaultWidth: 35,
   },
   {
     type: "music",
@@ -160,6 +164,8 @@ export const linksRenderMap = [
         <p>{name}</p>
       </div>
     ),
+    defaultHeight: 8,
+    defaultWidth: 30,
     extraLayoutProps: {
       minH: 4,
       minW: 25,
