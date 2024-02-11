@@ -14,7 +14,7 @@ export const gridRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const currentUserId = ctx.session.user.id;
 
-      const ip = ipAddress(ctx.req as Request) ?? "unknown";
+      const ip = ipAddress(ctx.req as Request) ?? "127.0.0.1";
       const { success } = await ratelimit().limit(ip);
       if (!success)
         throw new TRPCError({
