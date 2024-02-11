@@ -1,18 +1,7 @@
 "use client";
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/lib/ui/select";
-import { createPortal } from "react-dom";
 import { LineChart } from "@tremor/react";
 import { Card } from "@/lib/ui/card";
-import { Button } from "@/lib/ui/button";
-import { api } from "@/trpc/react";
-import { toast } from "sonner";
 
 const chartdata = [
   {
@@ -81,9 +70,6 @@ const dataFormatter = (number: number) =>
   `$${Intl.NumberFormat("us").format(number).toString()}`;
 
 export default function AnalyticsView() {
-  const { mutate } = api.analytics.createGridAccessClick.useMutation({
-    onSuccess: () => toast.success("hello"),
-  });
   return (
     <div>
       {/* {document.getElementById("dateSelect") &&
@@ -106,7 +92,6 @@ export default function AnalyticsView() {
       <Card className="p-5">
         <h1 className="text-sm text-slate-500">Clicks</h1>
         <p className="text-3xl font-semibold">465</p>
-        <Button onClick={() => mutate({ gridId: "test" })}>test</Button>
         <LineChart
           className="h-80"
           data={chartdata}
