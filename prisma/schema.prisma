@@ -7,18 +7,6 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
-model Post {
-    id        Int      @id @default(autoincrement())
-    name      String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-
-    createdBy   User   @relation(fields: [createdById], references: [id])
-    createdById String
-
-    @@index([name])
-}
-
 // Necessary for Next auth
 model Account {
     id                String  @id @default(cuid())
@@ -48,17 +36,20 @@ model Session {
 
 model User {
     id            String    @id @default(cuid())
-    name          String?
+    name          String?   @unique
     email         String?   @unique
     password      String?
     emailVerified DateTime?
-    image         String?
+    image         String    @default("https://notion-avatar.vercel.app/api/img/eyJmYWNlIjo1LCJub3NlIjozLCJtb3V0aCI6MiwiZXllcyI6MCwiZXllYnJvd3MiOjEyLCJnbGFzc2VzIjowLCJoYWlyIjowLCJhY2Nlc3NvcmllcyI6MCwiZGV0YWlscyI6MCwiYmVhcmQiOjAsImZsaXAiOjEsImNvbG9yIjoicmdiYSgyNTUsIDAsIDAsIDApIiwic2hhcGUiOiJub25lIn0=")
 
     createdAt DateTime @default(now())
 
     accounts Account[]
     sessions Session[]
-    posts    Post[]
+    grids    Grid[]
+
+    gridItemClicks GridItemClick[]
+    tags           Tag[]
 }
 
 model VerificationToken {
@@ -67,4 +58,115 @@ model VerificationToken {
     expires    DateTime
 
     @@unique([identifier, token])
+}
+
+model Grid {
+    id String @id @default(cuid())
+
+    name       String
+    slug       String
+    default    Boolean @default(false)
+    bgColor    String?
+    bgImageUrl String?
+    columns    Int
+
+    userId String
+    user   User   @relation(fields: [userId], references: [id])
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    gridItems GridItem[]
+    clicks    GridClick[]
+}
+
+model GridItem {
+    id String @id @default(cuid())
+
+    name      String
+    type      String
+    slug      String
+    url       String?
+    text      String?
+    bgColor   String?
+    textColor String?
+    x         Int     @default(0)
+    y         Int     @default(0)
+    w         Int     @default(0)
+    h         Int     @default(0)
+    tags      String?
+
+    gridId     String
+    grid       Grid            @relation(fields: [gridId], references: [id])
+    itemClicks GridItemClick[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model GridClick {
+    id String @id @default(cuid())
+
+    country String?
+    flag    String?
+    city    String?
+
+    deviceType   String?
+    deviceModel  String?
+    deviceVendor String?
+
+    os        String?
+    osVersion String?
+
+    isBot Boolean @default(false)
+
+    browser        String?
+    browserVersion String?
+
+    createdAt DateTime @default(now())
+    updateAd  DateTime @updatedAt
+
+    gridId String
+    grid   Grid   @relation(fields: [gridId], references: [id])
+}
+
+model GridItemClick {
+    id String @id @default(cuid())
+
+    country String?
+    flag    String?
+    city    String?
+
+    deviceType   String?
+    deviceModel  String?
+    deviceVendor String?
+
+    os        String?
+    osVersion String?
+
+    isBot Boolean @default(false)
+
+    browser        String?
+    browserVersion String?
+
+    createdAt DateTime @default(now())
+    updateAd  DateTime @updatedAt
+
+    gridItemId String
+    gridItem   GridItem @relation(fields: [gridItemId], references: [id], onDelete: Cascade)
+
+    userId String
+    user   User   @relation(fields: [userId], references: [id])
+}
+
+model Tag {
+    id String @id @default(cuid())
+
+    label String
+    value String
+
+    User   User?   @relation(fields: [userId], references: [id])
+    userId String?
+
+    createdAt DateTime @default(now())
 }

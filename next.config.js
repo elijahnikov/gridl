@@ -5,6 +5,16 @@
 await import("./src/env.js");
 
 /** @type {import("next").NextConfig} */
-const config = {};
+const config = {
+  images: {
+    remotePatterns: [
+      { hostname: "cdn.discordapp.com" },
+      { hostname: "lh3.googleusercontent.com" },
+      { hostname: "illustrations.popsy.co" },
+      { hostname: "notion-avatar.vercel.app" },
+      { hostname: "www.google.com" },
+    ],
+  },
+};
 
 export default config;

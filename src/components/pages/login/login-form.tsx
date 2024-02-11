@@ -28,7 +28,6 @@ export default function LoginForm() {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
     void signIn("credentials", {
       ...values,
       callbackUrl: "/",

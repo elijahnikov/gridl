@@ -7,7 +7,6 @@ import {
 } from "next-auth";
 import DiscordProvider from "next-auth/providers/discord";
 import GoogleProvider from "next-auth/providers/google";
-import TwitterProvider from "next-auth/providers/twitter";
 import CredentialsProvider from "next-auth/providers/credentials";
 
 import { env } from "@/env";
@@ -55,7 +54,6 @@ export const authOptions: NextAuthOptions = {
         token.accessToken = account.access_token;
         token.id = user.id;
         token.name = (user as User).name;
-        console.log({ user });
       }
       return token;
     },
@@ -72,11 +70,6 @@ export const authOptions: NextAuthOptions = {
     DiscordProvider({
       clientId: env.DISCORD_CLIENT_ID,
       clientSecret: env.DISCORD_CLIENT_SECRET,
-    }),
-    TwitterProvider({
-      clientId: env.TWITTER_CLIENT_ID,
-      clientSecret: env.TWITTER_CLIENT_SECRET,
-      version: "2.0",
     }),
     GoogleProvider({
       clientId: env.GOOGLE_CLIENT_ID,
@@ -123,7 +116,6 @@ export const authOptions: NextAuthOptions = {
         if (!passwordMatch) {
           return null;
         }
-        console.log("here1");
 
         return user;
       },

@@ -15,7 +15,7 @@ import Link from "next/link";
 export default function LoginPage() {
   return (
     <div className="mx-5 mx-auto">
-      <Card className={cn("w-[400px]")}>
+      <Card className={cn("w-[400px] bg-slate-100/30")}>
         <LoginRegisterHeader />
         <CardHeader>
           <CardTitle className="font-bold">Login</CardTitle>
