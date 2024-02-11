@@ -40,7 +40,7 @@ const socialShareMap = [
 
 export default function ShareModal({ slug }: { slug: string }) {
   return (
-    <div className="absolute bottom-2 right-2">
+    <div className="absolute right-2 top-2">
       <Dialog>
         <DialogTrigger>
           <div className="flex h-10 w-10 items-center justify-center rounded-full border bg-gray-100 shadow-md">
