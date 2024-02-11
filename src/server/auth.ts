@@ -65,6 +65,7 @@ export const authOptions: NextAuthOptions = {
     verifyRequest: "/login",
     error: "/login",
   },
+  debug: true,
   adapter: PrismaAdapter(db),
   providers: [
     DiscordProvider({
