@@ -44,10 +44,10 @@ model User {
 
     createdAt DateTime @default(now())
 
-    accounts       Account[]
-    sessions       Session[]
-    grids          Grid[]
-    gridClicks     GridClick[]
+    accounts Account[]
+    sessions Session[]
+    grids    Grid[]
+
     gridItemClicks GridItemClick[]
     tags           Tag[]
 }
@@ -128,9 +128,6 @@ model GridClick {
 
     gridId String
     grid   Grid   @relation(fields: [gridId], references: [id])
-
-    userId String
-    user   User   @relation(fields: [userId], references: [id])
 }
 
 model GridItemClick {
