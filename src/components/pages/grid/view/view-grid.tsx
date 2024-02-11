@@ -1,16 +1,18 @@
 import { type RouterOutputs } from "@/trpc/shared";
-import { memo, useEffect, useMemo, useState } from "react";
+import { memo, useEffect, useMemo, useRef, useState } from "react";
 import { type LayoutType } from "../editor/editor-container";
 import { linksRenderMap } from "@/utils/linksMap";
 import { Responsive, WidthProvider } from "react-grid-layout";
 import { cn } from "@/lib/utils";
 import Cell from "../editor/cell";
+import { api } from "@/trpc/react";
 
 type ResizeHandle = "s" | "w" | "e" | "n" | "sw" | "nw" | "se" | "ne";
 
 function ViewGrid({ data }: { data: RouterOutputs["grid"]["gridForViewing"] }) {
   const [parsedLayout, setParsedLayout] = useState<LayoutType[]>([]);
-
+  const initialized = useRef(false);
+  const { mutate } = api.analytics.createGridAccessClick.useMutation();
   const layouts = useMemo(() => {
     return {
       lg: parsedLayout.map((obj) => {
@@ -78,6 +80,16 @@ function ViewGrid({ data }: { data: RouterOutputs["grid"]["gridForViewing"] }) {
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [layouts, parsedLayout]);
+
+  useEffect(() => {
+    if (!initialized.current) {
+      initialized.current = true;
+      setTimeout(() => {
+        mutate({ gridId: data.id });
+      }, 5000);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div
