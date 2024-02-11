@@ -1,6 +1,7 @@
 "use client";
 
 import LoadingSpinner from "@/components/common/loading-spinner";
+import AnalyticsView from "@/components/pages/grid/analytics/analytics-view";
 import GridProjectHeader from "@/components/pages/grid/header";
 import { getGridBySlug } from "@/utils/getGrids";
 import { useSession } from "next-auth/react";
@@ -32,6 +33,7 @@ export default function GridAnalyticsPage() {
       <div className="w-full">
         <div className="my-10 px-[20px] sm:px-[80px] lg:px-[200px]">
           {/* <GridCellList slug={slug} /> */}
+          <AnalyticsView />
         </div>
       </div>
     </div>
