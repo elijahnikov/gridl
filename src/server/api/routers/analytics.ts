@@ -4,12 +4,14 @@ import { ipAddress } from "@vercel/edge";
 import { ratelimit } from "@/utils/ratelimit";
 import { TRPCError } from "@trpc/server";
 import type { Geo, UserAgent } from "@/app/api/trpc/[trpc]/route";
+import { subHours, subDays, startOfYear } from "date-fns";
 
-export const intervalData = {
-  "1h": new Date(Date.now() - 3600000),
-  "24h": new Date(Date.now() - 86400000),
-  "7d": new Date(Date.now() - 604800000),
-  "30d": new Date(Date.now() - 2592000000),
+export const interval = {
+  "1 hour": subHours(Date.now(), 1),
+  "24 hours": subHours(Date.now(), 24),
+  "7 days": subDays(Date.now(), 7),
+  "30 days": subDays(Date.now(), 30),
+  all: startOfYear(2024),
 };
 
 export const analyticsRouter = createTRPCRouter({
@@ -68,22 +70,19 @@ export const analyticsRouter = createTRPCRouter({
       if (!grid) {
         throw new TRPCError({ code: "NOT_FOUND" });
       }
-      // const clicks = await ctx.db.gridClick.findMany({
-      //   where: {
-      //     gridId: grid.id,
-      //   },
-      // });
-      // return {
-      //   numberOfClicks: clicks.length,
-      //   clicks,
-      // };
-      const groupedClicks = await ctx.db.gridClick.groupBy({
-        by: "createdAt",
+      console.log({
+        createdAt: {
+          gte: new Date(),
+          lte: interval[input.dateRange as keyof typeof interval],
+        },
+      });
+      const groupedClicks = await ctx.db.gridClick.findMany({
         where: {
           gridId: grid.id,
-        },
-        _count: {
-          createdAt: true,
+          createdAt: {
+            lte: new Date(),
+            gte: interval[input.dateRange as keyof typeof interval],
+          },
         },
         orderBy: {
           createdAt: "asc",
