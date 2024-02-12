@@ -1,9 +1,16 @@
 import { z } from "zod";
-import { createTRPCRouter, publicProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { ipAddress } from "@vercel/edge";
 import { ratelimit } from "@/utils/ratelimit";
 import { TRPCError } from "@trpc/server";
 import type { Geo, UserAgent } from "@/app/api/trpc/[trpc]/route";
+
+export const intervalData = {
+  "1h": new Date(Date.now() - 3600000),
+  "24h": new Date(Date.now() - 86400000),
+  "7d": new Date(Date.now() - 604800000),
+  "30d": new Date(Date.now() - 2592000000),
+};
 
 export const analyticsRouter = createTRPCRouter({
   //
@@ -44,5 +51,44 @@ export const analyticsRouter = createTRPCRouter({
         },
       });
       return true;
+    }),
+  //
+  // GET: get all clicks for specific grid
+  //
+  gridClicks: protectedProcedure
+    .input(z.object({ slug: z.string(), dateRange: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const currentUserId = ctx.session.user.id;
+      const grid = await ctx.db.grid.findFirst({
+        where: {
+          slug: input.slug,
+          userId: currentUserId,
+        },
+      });
+      if (!grid) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+      // const clicks = await ctx.db.gridClick.findMany({
+      //   where: {
+      //     gridId: grid.id,
+      //   },
+      // });
+      // return {
+      //   numberOfClicks: clicks.length,
+      //   clicks,
+      // };
+      const groupedClicks = await ctx.db.gridClick.groupBy({
+        by: "createdAt",
+        where: {
+          gridId: grid.id,
+        },
+        _count: {
+          createdAt: true,
+        },
+        orderBy: {
+          createdAt: "asc",
+        },
+      });
+      return groupedClicks;
     }),
 });
