@@ -26,10 +26,10 @@ export default function AnalyticsViewFilter({
             <SelectValue placeholder="Date Range" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="1 hour">1 hour</SelectItem>
             <SelectItem value="24 hours">24 hours</SelectItem>
             <SelectItem value="7 days">7 days</SelectItem>
             <SelectItem value="30 days">30 days</SelectItem>
+            <SelectItem value="1 year">1 year</SelectItem>
           </SelectContent>
         </Select>
       </div>

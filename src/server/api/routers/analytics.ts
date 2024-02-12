@@ -4,14 +4,13 @@ import { ipAddress } from "@vercel/edge";
 import { ratelimit } from "@/utils/ratelimit";
 import { TRPCError } from "@trpc/server";
 import type { Geo, UserAgent } from "@/app/api/trpc/[trpc]/route";
-import { subHours, subDays, startOfYear } from "date-fns";
+import { subHours, subDays, subYears } from "date-fns";
 
 export const interval = {
-  "1 hour": subHours(Date.now(), 1),
   "24 hours": subHours(Date.now(), 24),
   "7 days": subDays(Date.now(), 7),
   "30 days": subDays(Date.now(), 30),
-  all: startOfYear(2024),
+  "1 year": subYears(Date.now(), 1),
 };
 
 export const analyticsRouter = createTRPCRouter({

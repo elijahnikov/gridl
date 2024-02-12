@@ -1,11 +1,16 @@
-import { format, subDays, subHours, startOfHour } from "date-fns";
+import { format, subDays, subHours, startOfHour, subMonths, sub } from "date-fns";
 import { type RouterOutputs } from "@/trpc/shared";
+
+const calculateTimeFromLaunch = () => {
+  const foundedDate = new Date(2024, 0, 1)
+}
 
 export const interval = {
   "7 days": 7,
   "30 days": 30,
   "24 hours": 24,
-  "1 hour": 1,
+  "1 year": 12,
+  all: 
 };
 
 export default function groupAnalyticsData({
@@ -19,13 +24,17 @@ export default function groupAnalyticsData({
   const range = interval[dateRange as keyof typeof interval];
 
   let dateIncrementFn;
-  let dateFormat: "HH:mm" | "MMM dd"; // Explicitly type dateFormat
-  if (dateRange === "24 hours" || dateRange === "1 hour") {
-    dateIncrementFn = subHours; // Use subHours for hour-level granularity
-    dateFormat = "HH:mm"; // Use rounded hour format for hour-level granularity
+  let dateFormat: "HH:mm" | "MMM dd" | "MMM YYYY";
+
+  if (dateRange === "1 year") {
+    dateIncrementFn = subMonths;
+    dateFormat = "MMM YYYY";
+  } else if (dateRange === "24 hours" || dateRange === "1 hour") {
+    dateIncrementFn = subHours;
+    dateFormat = "HH:mm";
   } else {
-    dateIncrementFn = subDays; // Use subDays for day-level granularity
-    dateFormat = "MMM dd"; // Use month-day format for day-level granularity
+    dateIncrementFn = subDays;
+    dateFormat = "MMM dd";
   }
 
   for (let i = 0; i < range; i++) {
@@ -33,7 +42,6 @@ export default function groupAnalyticsData({
     allDates.push(format(date, dateFormat));
   }
 
-  // Reverse the order of allDates
   allDates.reverse();
 
   const roundedData = data.map((item) => ({

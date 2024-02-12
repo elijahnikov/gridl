@@ -23,9 +23,9 @@ export default function AnalyticsContainer() {
     return <></>;
   }
 
-  console.log({ data });
+  console.log(data);
   const tData = groupAnalyticsData({ data, dateRange });
-  console.log({ tData });
+  console.log(tData);
   return (
     <div className="space-y-3">
       <AnalyticsViewFilter
