@@ -30,6 +30,7 @@ export default function AnalyticsViewFilter({
             <SelectItem value="7 days">7 days</SelectItem>
             <SelectItem value="30 days">30 days</SelectItem>
             <SelectItem value="1 year">1 year</SelectItem>
+            <SelectItem value="all">All</SelectItem>
           </SelectContent>
         </Select>
       </div>

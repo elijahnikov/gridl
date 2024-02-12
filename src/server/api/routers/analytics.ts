@@ -11,6 +11,7 @@ export const interval = {
   "7 days": subDays(Date.now(), 7),
   "30 days": subDays(Date.now(), 30),
   "1 year": subYears(Date.now(), 1),
+  all: new Date(2023, 0, 1),
 };
 
 export const analyticsRouter = createTRPCRouter({

@@ -15,7 +15,7 @@ export default function AnalyticsContainer() {
     slug,
     dateRange,
   });
-  console.log(data);
+
   if (isLoading) {
     return <></>;
   }
@@ -23,9 +23,8 @@ export default function AnalyticsContainer() {
     return <></>;
   }
 
-  console.log(data);
   const tData = groupAnalyticsData({ data, dateRange });
-  console.log(tData);
+
   return (
     <div className="space-y-3">
       <AnalyticsViewFilter
