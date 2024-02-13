@@ -1,9 +1,18 @@
 import { z } from "zod";
-import { createTRPCRouter, publicProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { ipAddress } from "@vercel/edge";
 import { ratelimit } from "@/utils/ratelimit";
 import { TRPCError } from "@trpc/server";
 import type { Geo, UserAgent } from "@/app/api/trpc/[trpc]/route";
+import { subHours, subDays, subYears } from "date-fns";
+
+export const interval = {
+  "24 hours": subHours(Date.now(), 24),
+  "7 days": subDays(Date.now(), 7),
+  "30 days": subDays(Date.now(), 30),
+  "1 year": subYears(Date.now(), 1),
+  all: new Date(2023, 0, 1),
+};
 
 export const analyticsRouter = createTRPCRouter({
   //
@@ -20,7 +29,7 @@ export const analyticsRouter = createTRPCRouter({
         });
       }
       const { device, browser, isBot, os } = ctx.userAgent! as UserAgent;
-      const { city, country, flag } = ctx.geolocation! as Geo;
+      const { city, country, flag, countryRegion } = ctx.geolocation! as Geo;
       await ctx.db.gridClick.create({
         data: {
           // device
@@ -38,11 +47,42 @@ export const analyticsRouter = createTRPCRouter({
           // location
           city,
           country,
+          countryRegion,
           flag,
           // grid
           gridId: input.gridId,
         },
       });
       return true;
+    }),
+  //
+  // GET: get all clicks for specific grid
+  //
+  gridClicks: protectedProcedure
+    .input(z.object({ slug: z.string(), dateRange: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const currentUserId = ctx.session.user.id;
+      const grid = await ctx.db.grid.findFirst({
+        where: {
+          slug: input.slug,
+          userId: currentUserId,
+        },
+      });
+      if (!grid) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+      const groupedClicks = await ctx.db.gridClick.findMany({
+        where: {
+          gridId: grid.id,
+          createdAt: {
+            lte: new Date(),
+            gte: interval[input.dateRange as keyof typeof interval],
+          },
+        },
+        orderBy: {
+          createdAt: "asc",
+        },
+      });
+      return groupedClicks;
     }),
 });
