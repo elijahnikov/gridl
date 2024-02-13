@@ -23,7 +23,7 @@ import {
 import { Input } from "@/lib/ui/input";
 import { Label } from "@/lib/ui/label";
 
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils/general";
 import { createGridItemSchema } from "@/server/api/schemas/gridItem";
 import { api } from "@/trpc/react";
 import stringIsValidURL from "@/utils/isValidUrl";

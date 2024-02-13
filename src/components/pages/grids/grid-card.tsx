@@ -6,7 +6,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/lib/ui/tooltip";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils/general";
 import { type RouterOutputs } from "@/trpc/shared";
 import { MousePointerSquare } from "lucide-react";
 import Link from "next/link";

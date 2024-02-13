@@ -19,7 +19,7 @@ import {
   BsYoutube,
 } from "react-icons/bs";
 import { FaSoundcloud } from "react-icons/fa";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils/general";
 
 export const linkTypes = ["social", "music", "basicLink"] as const;
 type LinkTypesIndex = (typeof linkTypes)[number];
