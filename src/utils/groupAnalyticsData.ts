@@ -100,7 +100,7 @@ export const mapAnalyticsDataForCards = ({
           result.push({
             title: item[key] as string,
             count: 1,
-            icon: item.flag ?? null,
+            icon: key === "country" ? item.flag : null,
           });
         }
       }
