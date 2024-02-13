@@ -3,7 +3,7 @@ import { memo, useEffect, useMemo, useRef, useState } from "react";
 import { type LayoutType } from "../editor/editor-container";
 import { linksRenderMap } from "@/utils/linksMap";
 import { Responsive, WidthProvider } from "react-grid-layout";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils/general";
 import Cell from "../editor/cell";
 import { api } from "@/trpc/react";
 
