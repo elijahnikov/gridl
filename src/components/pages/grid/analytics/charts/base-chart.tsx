@@ -4,7 +4,6 @@ import { BarList, type Color } from "@tremor/react";
 
 export default function BaseChart({
   data,
-  title,
   isLoading,
   header,
 }: {
@@ -18,7 +17,6 @@ export default function BaseChart({
     color?: Color;
   }[];
   isLoading: boolean;
-  title: string;
   header: string;
 }) {
   if (isLoading) {
@@ -37,10 +35,6 @@ export default function BaseChart({
           <div className="flex justify-between">
             <h3 className="font-medium">{header}</h3>
           </div>
-          <p className="mt-4 flex items-center justify-between text-sm text-slate-400">
-            <span>{title}</span>
-            <span>Clicks</span>
-          </p>
           <BarList color="slate-300" data={data} className="mt-2" />
         </Card>
       )}

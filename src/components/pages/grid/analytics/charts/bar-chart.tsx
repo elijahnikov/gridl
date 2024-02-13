@@ -33,7 +33,7 @@ export default function ClicksBarChart({
         <Card className="p-5">
           <div className="mb-10">
             <h1 className="text-sm text-slate-500">Clicks</h1>
-            <p className="text-3xl font-semibold">{data.length}</p>
+            <p className="text-5xl font-semibold">{data.length}</p>
           </div>
           {formattedData && (
             <BarChart

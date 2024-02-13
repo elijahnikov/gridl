@@ -2,22 +2,22 @@ import { type RouterOutputs } from "@/trpc/shared";
 import { mapAnalyticsDataForCards } from "@/utils/groupAnalyticsData";
 import BaseChart from "./base-chart";
 
-export default function OSChart({
+export default function TopLinksChart({
   data,
   isLoading,
 }: {
   data?: RouterOutputs["analytics"]["gridClicks"];
   isLoading: boolean;
 }) {
-  const osCounts = data && mapAnalyticsDataForCards({ data, key: "os" });
+  const browserCounts =
+    data && mapAnalyticsDataForCards({ data, key: "browser" });
 
   return (
     <>
       <BaseChart
-        header="Operating System"
-        title="System"
+        header="Top Links"
         isLoading={isLoading}
-        data={osCounts?.map((location) => {
+        data={browserCounts?.map((location) => {
           return {
             icon: () => (
               <div className="-mt-[2px] mr-2 h-4 w-4">{location.icon}</div>
