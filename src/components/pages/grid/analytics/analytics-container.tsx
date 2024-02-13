@@ -17,14 +17,16 @@ export default function AnalyticsContainer() {
       dateRange,
     });
 
+  console.log(data);
+
   return (
     <div className="space-y-3">
       <AnalyticsViewFilter
         rangeValue={dateRange}
         setRangeValue={setDateRange}
       />
-      <div className="grid w-full grid-cols-2 gap-5">
-        <div className="col-span-2">
+      <div className="grid w-full grid-cols-1 gap-5 sm:grid-cols-2">
+        <div className="col-span-1 sm:col-span-2">
           {data && (
             <ClicksBarChart
               data={data}
@@ -33,7 +35,7 @@ export default function AnalyticsContainer() {
             />
           )}
         </div>
-        <LocationChart />
+        {data && <LocationChart data={data} />}
         <DeviceChart />
       </div>
     </div>

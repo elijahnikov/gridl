@@ -107,9 +107,10 @@ model GridItem {
 model GridClick {
     id String @id @default(cuid())
 
-    country String?
-    flag    String?
-    city    String?
+    country       String?
+    countryRegion String?
+    flag          String?
+    city          String?
 
     deviceType   String?
     deviceModel  String?

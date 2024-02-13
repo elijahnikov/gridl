@@ -33,7 +33,7 @@ export default function groupAnalyticsData({
 }) {
   const allDates = [];
   const range = interval[dateRange as keyof typeof interval];
-  console.log(1111, calculateTimeFromLaunch());
+
   let dateIncrementFn;
   let dateFormat: "HH:mm" | "MMM dd" | "MMM yyyy";
 

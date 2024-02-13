@@ -29,7 +29,7 @@ export const analyticsRouter = createTRPCRouter({
         });
       }
       const { device, browser, isBot, os } = ctx.userAgent! as UserAgent;
-      const { city, country, flag } = ctx.geolocation! as Geo;
+      const { city, country, flag, countryRegion } = ctx.geolocation! as Geo;
       await ctx.db.gridClick.create({
         data: {
           // device
@@ -47,6 +47,7 @@ export const analyticsRouter = createTRPCRouter({
           // location
           city,
           country,
+          countryRegion,
           flag,
           // grid
           gridId: input.gridId,
@@ -70,12 +71,6 @@ export const analyticsRouter = createTRPCRouter({
       if (!grid) {
         throw new TRPCError({ code: "NOT_FOUND" });
       }
-      console.log({
-        createdAt: {
-          gte: new Date(),
-          lte: interval[input.dateRange as keyof typeof interval],
-        },
-      });
       const groupedClicks = await ctx.db.gridClick.findMany({
         where: {
           gridId: grid.id,
