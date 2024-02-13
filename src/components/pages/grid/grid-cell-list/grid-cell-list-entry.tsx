@@ -3,7 +3,7 @@ import { type GridCell } from "./grid-cell-list";
 import Favicon from "@/components/common/favicon";
 import { Badge } from "@/lib/ui/badge";
 import { format } from "date-fns";
-import { kFormatter } from "@/lib/utils";
+import { kFormatter } from "@/utils/general";
 import ListActionMenu from "./list-action-menu";
 
 export default function GridCellListEntry({

@@ -12,7 +12,7 @@ import { Button } from "@/lib/ui/button";
 import { api } from "@/trpc/react";
 import { toast } from "sonner";
 import _ from "lodash";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils/general";
 import Cell from "./cell";
 
 export type LayoutType = {

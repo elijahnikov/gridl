@@ -1,5 +1,5 @@
 import { LoadingPage } from "@/components/common/loading-spinner";
-import groupAnalyticsData from "@/lib/groupAnalyticsData";
+import groupAnalyticsData from "@/utils/groupAnalyticsData";
 import { Card } from "@/lib/ui/card";
 import { type RouterOutputs } from "@/trpc/shared";
 import { BarChart } from "@tremor/react";
@@ -10,7 +10,7 @@ export default function ClicksBarChart({
   dateRange,
   isLoading,
 }: {
-  data: RouterOutputs["analytics"]["gridClicks"];
+  data?: RouterOutputs["analytics"]["gridClicks"];
   dateRange: string;
   isLoading: boolean;
 }) {
@@ -28,22 +28,26 @@ export default function ClicksBarChart({
     );
   }
   return (
-    <Card className="p-5">
-      <div className="mb-10">
-        <h1 className="text-sm text-slate-500">Clicks</h1>
-        <p className="text-3xl font-semibold">{data.length}</p>
-      </div>
-      {formattedData && (
-        <BarChart
-          allowDecimals={false}
-          showLegend={false}
-          className="h-80"
-          data={formattedData}
-          index="date"
-          categories={["clicks"]}
-          yAxisWidth={40}
-        />
+    <>
+      {data && formattedData && (
+        <Card className="p-5">
+          <div className="mb-10">
+            <h1 className="text-sm text-slate-500">Clicks</h1>
+            <p className="text-3xl font-semibold">{data.length}</p>
+          </div>
+          {formattedData && (
+            <BarChart
+              allowDecimals={false}
+              showLegend={false}
+              className="h-80"
+              data={formattedData}
+              index="date"
+              categories={["clicks"]}
+              yAxisWidth={40}
+            />
+          )}
+        </Card>
       )}
-    </Card>
+    </>
   );
 }

@@ -76,3 +76,33 @@ export default function groupAnalyticsData({
 
   return groupedData;
 }
+
+export type BarLineType = {
+  title: string;
+  count: number;
+  icon: string | null;
+};
+
+export const mapAnalyticsDataForCards = ({
+  data,
+  key,
+}: {
+  data: RouterOutputs["analytics"]["gridClicks"];
+  key: keyof RouterOutputs["analytics"]["gridClicks"][number];
+}) => {
+  return data.reduce((result: BarLineType[], item) => {
+    if (item.country !== null) {
+      const index = result.findIndex((entry) => entry.title === item[key]);
+      if (index !== -1) {
+        result[index]!.count++;
+      } else {
+        result.push({
+          title: item[key] as string,
+          count: 1,
+          icon: item.flag ?? null,
+        });
+      }
+    }
+    return result;
+  }, []);
+};

@@ -11,7 +11,7 @@ import {
 import EditLink from "../edit-link";
 import { api } from "@/trpc/react";
 import { toast } from "sonner";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils/general";
 
 export default function Cell({
   l,

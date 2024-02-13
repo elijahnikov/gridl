@@ -9,7 +9,7 @@ import {
   NavigationMenuList,
   navigationMenuTriggerStyle,
 } from "@/lib/ui/navigation-menu";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils/general";
 import ProjectSelector from "./project-selector";
 
 export default function NavTabs({

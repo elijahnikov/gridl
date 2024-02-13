@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from "@/lib/ui/card";
 
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils/general";
 import Link from "next/link";
 
 export default function RegisterPage() {

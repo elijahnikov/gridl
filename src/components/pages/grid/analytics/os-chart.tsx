@@ -1,30 +1,28 @@
 import { type RouterOutputs } from "@/trpc/shared";
-import { countries } from "country-data";
 import { mapAnalyticsDataForCards } from "@/utils/groupAnalyticsData";
 import BaseChart from "./base-chart";
 
-export default function LocationChart({
+export default function OSChart({
   data,
   isLoading,
 }: {
   data?: RouterOutputs["analytics"]["gridClicks"];
   isLoading: boolean;
 }) {
-  const locationCounts =
-    data && mapAnalyticsDataForCards({ data, key: "country" });
+  const osCounts = data && mapAnalyticsDataForCards({ data, key: "os" });
 
   return (
     <>
       <BaseChart
-        title="Country"
-        header="Location"
+        header="Operating System"
+        title="System"
         isLoading={isLoading}
-        data={locationCounts?.map((location) => {
+        data={osCounts?.map((location) => {
           return {
             icon: () => (
               <div className="-mt-[2px] mr-2 h-4 w-4">{location.icon}</div>
             ),
-            name: countries[location.title]!.name,
+            name: location.title,
             value: location.count,
           };
         })}

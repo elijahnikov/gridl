@@ -1,7 +1,7 @@
 "use client";
 
 import Nav from "./nav";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils/general";
 
 interface LayoutProps {
   children: React.ReactNode;
