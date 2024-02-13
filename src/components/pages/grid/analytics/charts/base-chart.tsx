@@ -1,6 +1,9 @@
 import { LoadingPage } from "@/components/common/loading-spinner";
 import { Card } from "@/lib/ui/card";
+import { Dialog, DialogContent, DialogTrigger } from "@/lib/ui/dialog";
 import { BarList, type Color } from "@tremor/react";
+
+const DATA_LIMIT = 2;
 
 export default function BaseChart({
   data,
@@ -28,6 +31,7 @@ export default function BaseChart({
       </Card>
     );
   }
+
   return (
     <>
       {data && (
@@ -35,7 +39,28 @@ export default function BaseChart({
           <div className="flex justify-between">
             <h3 className="font-medium">{header}</h3>
           </div>
-          <BarList color="slate-300" data={data} className="mt-2" />
+          <BarList
+            color="slate-300"
+            data={data.slice(0, DATA_LIMIT)}
+            className="mt-2"
+          />
+          {data.length > DATA_LIMIT && (
+            <div className="w-full">
+              <Dialog>
+                <DialogTrigger className="w-full">
+                  <div className="mt-4 cursor-pointer text-center text-sm text-slate-500 hover:underline">
+                    See all
+                  </div>
+                </DialogTrigger>
+                <DialogContent className="py-8">
+                  <div className="flex justify-between">
+                    <h3 className="font-medium">{header}</h3>
+                  </div>
+                  <BarList color="slate-300" data={data} className="mt-2" />
+                </DialogContent>
+              </Dialog>
+            </div>
+          )}
         </Card>
       )}
     </>

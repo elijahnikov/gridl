@@ -12,13 +12,13 @@ export default function LocationChart({
 }) {
   const locationCounts =
     data && mapAnalyticsDataForCards({ data, key: "country" });
-  const temp = [...locationCounts!, ...locationCounts!, ...locationCounts!];
+
   return (
     <>
       <BaseChart
         header="Location"
         isLoading={isLoading}
-        data={temp?.map((location) => {
+        data={locationCounts?.map((location) => {
           return {
             icon: () => (
               <div className="-mt-[2px] mr-2 h-4 w-4">{location.icon}</div>

@@ -90,19 +90,21 @@ export const mapAnalyticsDataForCards = ({
   data: RouterOutputs["analytics"]["gridClicks"];
   key: keyof RouterOutputs["analytics"]["gridClicks"][number];
 }) => {
-  return data.reduce((result: BarLineType[], item) => {
-    if (item.country !== null) {
-      const index = result.findIndex((entry) => entry.title === item[key]);
-      if (index !== -1) {
-        result[index]!.count++;
-      } else {
-        result.push({
-          title: item[key] as string,
-          count: 1,
-          icon: item.flag ?? null,
-        });
+  return data
+    .reduce((result: BarLineType[], item) => {
+      if (item.country !== null) {
+        const index = result.findIndex((entry) => entry.title === item[key]);
+        if (index !== -1) {
+          result[index]!.count++;
+        } else {
+          result.push({
+            title: item[key] as string,
+            count: 1,
+            icon: item.flag ?? null,
+          });
+        }
       }
-    }
-    return result;
-  }, []);
+      return result;
+    }, [])
+    .sort((a, b) => b.count - a.count);
 };
