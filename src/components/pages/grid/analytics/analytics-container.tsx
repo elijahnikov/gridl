@@ -12,6 +12,7 @@ import TopLinksChart from "./charts/top-links-chart";
 
 export default function AnalyticsContainer() {
   const [dateRange, setDateRange] = useState<string>("30 days");
+  const [chartType, setChartType] = useState<string>("bar");
   const { slug } = useParams() as { slug: string };
   const { data, error, isLoading, isRefetching } =
     api.analytics.gridClicks.useQuery({
@@ -24,10 +25,13 @@ export default function AnalyticsContainer() {
       <AnalyticsViewFilter
         rangeValue={dateRange}
         setRangeValue={setDateRange}
+        chartType={chartType}
+        setChartType={setChartType}
       />
       <div className="grid w-full grid-cols-1 gap-5 sm:grid-cols-2">
         <div className="col-span-1 sm:col-span-2">
           <ClicksBarChart
+            chartType={chartType}
             data={data}
             dateRange={dateRange}
             isLoading={isRefetching || isLoading}

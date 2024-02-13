@@ -2,17 +2,19 @@ import { LoadingPage } from "@/components/common/loading-spinner";
 import groupAnalyticsData from "@/utils/groupAnalyticsData";
 import { Card } from "@/lib/ui/card";
 import { type RouterOutputs } from "@/trpc/shared";
-import { BarChart } from "@tremor/react";
+import { BarChart, LineChart } from "@tremor/react";
 import { useMemo } from "react";
 
 export default function ClicksBarChart({
   data,
   dateRange,
   isLoading,
+  chartType,
 }: {
   data?: RouterOutputs["analytics"]["gridClicks"];
   dateRange: string;
   isLoading: boolean;
+  chartType: string;
 }) {
   const formattedData = useMemo(() => {
     return data && groupAnalyticsData({ data, dateRange });
@@ -36,15 +38,30 @@ export default function ClicksBarChart({
             <p className="text-5xl font-semibold">{data.length}</p>
           </div>
           {formattedData && (
-            <BarChart
-              allowDecimals={false}
-              showLegend={false}
-              className="h-80"
-              data={formattedData}
-              index="date"
-              categories={["clicks"]}
-              yAxisWidth={40}
-            />
+            <div>
+              {chartType === "bar" && (
+                <BarChart
+                  allowDecimals={false}
+                  showLegend={false}
+                  className="h-80"
+                  data={formattedData}
+                  index="date"
+                  categories={["clicks"]}
+                  yAxisWidth={40}
+                />
+              )}
+              {chartType === "line" && (
+                <LineChart
+                  allowDecimals={false}
+                  showLegend={false}
+                  className="h-80"
+                  data={formattedData}
+                  index="date"
+                  categories={["clicks"]}
+                  yAxisWidth={40}
+                />
+              )}
+            </div>
           )}
         </Card>
       )}
