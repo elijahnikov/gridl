@@ -47,7 +47,7 @@ export default function ClicksBarChart({
                   data={formattedData}
                   index="date"
                   categories={["clicks"]}
-                  yAxisWidth={40}
+                  yAxisWidth={20}
                 />
               )}
               {chartType === "line" && (
@@ -58,7 +58,7 @@ export default function ClicksBarChart({
                   data={formattedData}
                   index="date"
                   categories={["clicks"]}
-                  yAxisWidth={40}
+                  yAxisWidth={20}
                 />
               )}
             </div>
