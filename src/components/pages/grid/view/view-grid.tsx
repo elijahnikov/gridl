@@ -12,7 +12,10 @@ type ResizeHandle = "s" | "w" | "e" | "n" | "sw" | "nw" | "se" | "ne";
 function ViewGrid({ data }: { data: RouterOutputs["grid"]["gridForViewing"] }) {
   const [parsedLayout, setParsedLayout] = useState<LayoutType[]>([]);
   const initialized = useRef(false);
+
   const { mutate } = api.analytics.createGridAccessClick.useMutation();
+  const { mutate: linkClick } = api.analytics.createGridLinkClick.useMutation();
+
   const layouts = useMemo(() => {
     return {
       lg: parsedLayout.map((obj) => {
@@ -67,6 +70,12 @@ function ViewGrid({ data }: { data: RouterOutputs["grid"]["gridForViewing"] }) {
                 backgroundColor: l.bgColor ?? "none",
                 color: l.textColor ?? "black",
               }}
+              onClick={() =>
+                linkClick({
+                  gridId: data.id,
+                  gridItemId: l.id,
+                })
+              }
               className={cn(
                 l.type === "basicLink" && "shadow-[0px_0px_5px_1px_#00000024]",
                 "flex justify-center rounded-xl",
@@ -82,23 +91,17 @@ function ViewGrid({ data }: { data: RouterOutputs["grid"]["gridForViewing"] }) {
   }, [layouts, parsedLayout]);
 
   useEffect(() => {
-    // if (!initialized.current) {
-    //   initialized.current = true;
-    //   setTimeout(() => {
-    //     mutate({ gridId: data.id });
-    //   }, 5000);
-    // }
+    if (!initialized.current) {
+      initialized.current = true;
+      setTimeout(() => {
+        mutate({ gridId: data.id });
+      }, 5000);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <div
-      onClick={(e: React.MouseEvent) => {
-        const targetElement = e.target as HTMLElement;
-        if (targetElement.classList.contains("rsme-twitter-embed")) {
-          console.log("Embed clicked!");
-        }
-      }}
       style={{ background: data.bgColor ?? "none" }}
       className="h-full rounded-md"
     >
