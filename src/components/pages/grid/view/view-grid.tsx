@@ -1,5 +1,5 @@
 import { type RouterOutputs } from "@/trpc/shared";
-import { memo, useEffect, useMemo, useRef, useState } from "react";
+import React, { memo, useEffect, useMemo, useRef, useState } from "react";
 import { type LayoutType } from "../editor/editor-container";
 import { linksRenderMap } from "@/utils/linksMap";
 import { Responsive, WidthProvider } from "react-grid-layout";
@@ -82,17 +82,23 @@ function ViewGrid({ data }: { data: RouterOutputs["grid"]["gridForViewing"] }) {
   }, [layouts, parsedLayout]);
 
   useEffect(() => {
-    if (!initialized.current) {
-      initialized.current = true;
-      setTimeout(() => {
-        mutate({ gridId: data.id });
-      }, 5000);
-    }
+    // if (!initialized.current) {
+    //   initialized.current = true;
+    //   setTimeout(() => {
+    //     mutate({ gridId: data.id });
+    //   }, 5000);
+    // }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <div
+      onClick={(e: React.MouseEvent) => {
+        const targetElement = e.target as HTMLElement;
+        if (targetElement.classList.contains("rsme-twitter-embed")) {
+          console.log("Embed clicked!");
+        }
+      }}
       style={{ background: data.bgColor ?? "none" }}
       className="h-full rounded-md"
     >

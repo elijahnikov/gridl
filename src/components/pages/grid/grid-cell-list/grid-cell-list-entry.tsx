@@ -5,6 +5,12 @@ import { Badge } from "@/lib/ui/badge";
 import { format } from "date-fns";
 import { kFormatter } from "@/utils/general";
 import ListActionMenu from "./list-action-menu";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/lib/ui/tooltip";
 
 export default function GridCellListEntry({
   item,
@@ -14,6 +20,7 @@ export default function GridCellListEntry({
   slug: string;
 }) {
   const url = item.url?.replace("https://", "").replace("http://", "");
+
   return (
     <Card className="flex items-center justify-between gap-4 p-4">
       {item.url && <Favicon url={item.url} />}
@@ -40,13 +47,27 @@ export default function GridCellListEntry({
           >
             {url!.length > 70 ? `${url?.slice(0, 67)}...` : url}
           </a>
-          {"\n                  "}
         </CardDescription>
       </div>
       <div className="flex max-w-max items-center">
-        <Badge className="h-max transform cursor-pointer rounded-md hover:scale-105">
-          {kFormatter(item._count.itemClicks) ?? 0} clicks
-        </Badge>
+        {item.type === "basicLink" ? (
+          <Badge className="h-max transform cursor-pointer rounded-md">
+            {kFormatter(item._count.itemClicks) ?? 0} clicks
+          </Badge>
+        ) : (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                <Badge className="h-max transform cursor-not-allowed rounded-md opacity-50">
+                  {kFormatter(item._count.itemClicks) ?? 0} clicks
+                </Badge>
+              </TooltipTrigger>
+              <TooltipContent className="text-xs">
+                Analytics are currently not supported for custom embeds.
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        )}
         <ListActionMenu
           gridItem={{ ...item }}
           slug={slug}

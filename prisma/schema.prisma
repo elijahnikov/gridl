@@ -75,9 +75,9 @@ model Grid {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    gridItems     GridItem[]
-    clicks        GridClick[]
-    GridItemClick GridItemClick[]
+    gridItems      GridItem[]
+    clicks         GridClick[]
+    gridItemClicks GridItemClick[]
 }
 
 model GridItem {

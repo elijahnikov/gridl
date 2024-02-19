@@ -22,7 +22,7 @@ export const analyticsRouter = createTRPCRouter({
     .input(z.object({ gridId: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const ip = ipAddress(ctx.req as Request) ?? "127.0.0.1";
-      const { success } = await ratelimit().limit(ip);
+      const { success } = await ratelimit(1, "5 m").limit(ip);
       if (!success) {
         throw new TRPCError({
           code: "TOO_MANY_REQUESTS",
