@@ -147,6 +147,7 @@ export const analyticsRouter = createTRPCRouter({
       FROM "GridItemClick" gic
       JOIN "GridItem" gi ON gic."gridItemId" = gi.id
       WHERE gic."gridId" = ${grid.id}
+      AND gic."createdAt" >= ${interval[input.dateRange as keyof typeof interval]} AND gic."createdAt" <= ${new Date()}
       GROUP BY gi.url`) as { count: number; url: string }[];
       return result;
     }),
