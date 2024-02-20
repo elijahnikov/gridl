@@ -127,4 +127,27 @@ export const analyticsRouter = createTRPCRouter({
       });
       return groupedClicks;
     }),
+  //
+  // GET: get grid item clicks by grid
+  //
+  gridItemClicksForGrid: protectedProcedure
+    .input(z.object({ slug: z.string(), dateRange: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const currentUserId = ctx.session.user.id;
+      const grid = await ctx.db.grid.findFirst({
+        where: {
+          slug: input.slug,
+          userId: currentUserId,
+        },
+      });
+      if (!grid) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+      const result = (await ctx.db.$queryRaw`SELECT gi.url, COUNT(*) as count
+      FROM "GridItemClick" gic
+      JOIN "GridItem" gi ON gic."gridItemId" = gi.id
+      WHERE gic."gridId" = ${grid.id}
+      GROUP BY gi.url`) as { count: number; url: string }[];
+      return result;
+    }),
 });

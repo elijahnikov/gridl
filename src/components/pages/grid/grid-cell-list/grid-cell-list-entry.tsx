@@ -58,7 +58,7 @@ export default function GridCellListEntry({
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger>
-                <Badge className="h-max transform cursor-not-allowed rounded-md opacity-50">
+                <Badge className="h-max transform cursor-not-allowed rounded-md opacity-40">
                   {kFormatter(item._count.itemClicks) ?? 0} clicks
                 </Badge>
               </TooltipTrigger>

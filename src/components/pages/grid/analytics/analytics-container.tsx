@@ -38,7 +38,7 @@ export default function AnalyticsContainer() {
           />
         </div>
         <LocationChart data={data} isLoading={isRefetching || isLoading} />
-        <TopLinksChart data={data} isLoading={isRefetching || isLoading} />
+        <TopLinksChart dateRange={dateRange} slug={slug} />
         <OSChart data={data} isLoading={isRefetching || isLoading} />
         <BrowserChart data={data} isLoading={isRefetching || isLoading} />
       </div>
