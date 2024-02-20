@@ -99,7 +99,6 @@ function EditorContainer({
       }
       return obj2;
     });
-    console.log(updatedArray);
     setUpdatedLayout(updatedArray);
   };
 

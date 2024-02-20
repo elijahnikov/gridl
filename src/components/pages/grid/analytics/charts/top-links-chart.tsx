@@ -14,7 +14,6 @@ export default function TopLinksChart({
       slug,
       dateRange,
     });
-  console.log(data);
 
   return (
     <>

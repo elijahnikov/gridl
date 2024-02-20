@@ -128,7 +128,48 @@ export const analyticsRouter = createTRPCRouter({
       return groupedClicks;
     }),
   //
-  // GET: get grid item clicks by grid
+  // GET: get all clicks for specific grid link
+  //
+  gridItemClicks: protectedProcedure
+    .input(
+      z.object({ linkId: z.string(), slug: z.string(), dateRange: z.string() }),
+    )
+    .query(async ({ ctx, input }) => {
+      const currentUserId = ctx.session.user.id;
+      const grid = await ctx.db.grid.findFirst({
+        where: {
+          slug: input.slug,
+          userId: currentUserId,
+        },
+      });
+      if (!grid) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+      const groupedClicks = await ctx.db.gridItemClick.findMany({
+        where: {
+          gridItemId: input.linkId,
+          gridId: grid.id,
+          createdAt: {
+            lte: new Date(),
+            gte: interval[input.dateRange as keyof typeof interval],
+          },
+        },
+        orderBy: {
+          createdAt: "asc",
+        },
+        include: {
+          gridItem: {
+            select: {
+              name: true,
+              url: true,
+            },
+          },
+        },
+      });
+      return groupedClicks;
+    }),
+  //
+  // GET: get grid item clicks for grids top links
   //
   gridItemClicksForGrid: protectedProcedure
     .input(z.object({ slug: z.string(), dateRange: z.string() }))

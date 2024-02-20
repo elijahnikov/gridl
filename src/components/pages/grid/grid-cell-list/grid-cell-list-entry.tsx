@@ -11,6 +11,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/lib/ui/tooltip";
+import Link from "next/link";
 
 export default function GridCellListEntry({
   item,
@@ -51,9 +52,11 @@ export default function GridCellListEntry({
       </div>
       <div className="flex max-w-max items-center">
         {item.type === "basicLink" ? (
-          <Badge className="h-max transform cursor-pointer rounded-md">
-            {kFormatter(item._count.itemClicks) ?? 0} clicks
-          </Badge>
+          <Link href={`/project/${slug}/analytics?link=${item.id}`}>
+            <Badge className="h-max transform cursor-pointer rounded-md">
+              {kFormatter(item._count.itemClicks) ?? 0} clicks
+            </Badge>
+          </Link>
         ) : (
           <TooltipProvider>
             <Tooltip>
