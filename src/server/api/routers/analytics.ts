@@ -22,7 +22,7 @@ export const analyticsRouter = createTRPCRouter({
     .input(z.object({ gridId: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const ip = ipAddress(ctx.req as Request) ?? "127.0.0.1";
-      const { success } = await ratelimit().limit(ip);
+      const { success } = await ratelimit(1, "5 m").limit(ip);
       if (!success) {
         throw new TRPCError({
           code: "TOO_MANY_REQUESTS",
@@ -56,6 +56,48 @@ export const analyticsRouter = createTRPCRouter({
       return true;
     }),
   //
+  //  CREATE: Register grid link click
+  //
+  createGridLinkClick: publicProcedure
+    .input(z.object({ gridItemId: z.string(), gridId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const ip = ipAddress(ctx.req as Request) ?? "127.0.0.1";
+      const { success } = await ratelimit().limit(ip);
+      if (!success) {
+        throw new TRPCError({
+          code: "TOO_MANY_REQUESTS",
+        });
+      }
+      const { device, browser, isBot, os } = ctx.userAgent! as UserAgent;
+      const { city, country, flag, countryRegion } = ctx.geolocation! as Geo;
+      await ctx.db.gridItemClick.create({
+        data: {
+          // device
+          deviceType: device.type ?? "PC",
+          deviceModel: device.model,
+          deviceVendor: device.vendor,
+          // browser
+          browser: browser.name,
+          browserVersion: browser.version,
+          // os
+          os: os.name,
+          osVersion: os.version,
+          // bot
+          isBot,
+          // location
+          city,
+          country,
+          countryRegion,
+          flag,
+          // grid
+          gridId: input.gridId,
+          // grid item
+          gridItemId: input.gridItemId,
+        },
+      });
+      return true;
+    }),
+  //
   // GET: get all clicks for specific grid
   //
   gridClicks: protectedProcedure
@@ -84,5 +126,70 @@ export const analyticsRouter = createTRPCRouter({
         },
       });
       return groupedClicks;
+    }),
+  //
+  // GET: get all clicks for specific grid link
+  //
+  gridItemClicks: protectedProcedure
+    .input(
+      z.object({ linkId: z.string(), slug: z.string(), dateRange: z.string() }),
+    )
+    .query(async ({ ctx, input }) => {
+      const currentUserId = ctx.session.user.id;
+      const grid = await ctx.db.grid.findFirst({
+        where: {
+          slug: input.slug,
+          userId: currentUserId,
+        },
+      });
+      if (!grid) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+      const groupedClicks = await ctx.db.gridItemClick.findMany({
+        where: {
+          gridItemId: input.linkId,
+          gridId: grid.id,
+          createdAt: {
+            lte: new Date(),
+            gte: interval[input.dateRange as keyof typeof interval],
+          },
+        },
+        orderBy: {
+          createdAt: "asc",
+        },
+        include: {
+          gridItem: {
+            select: {
+              name: true,
+              url: true,
+            },
+          },
+        },
+      });
+      return groupedClicks;
+    }),
+  //
+  // GET: get grid item clicks for grids top links
+  //
+  gridItemClicksForGrid: protectedProcedure
+    .input(z.object({ slug: z.string(), dateRange: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const currentUserId = ctx.session.user.id;
+      const grid = await ctx.db.grid.findFirst({
+        where: {
+          slug: input.slug,
+          userId: currentUserId,
+        },
+      });
+      if (!grid) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+      const result = (await ctx.db.$queryRaw`SELECT gi.url, COUNT(*) as count
+      FROM "GridItemClick" gic
+      JOIN "GridItem" gi ON gic."gridItemId" = gi.id
+      WHERE gic."gridId" = ${grid.id}
+      AND gic."createdAt" >= ${interval[input.dateRange as keyof typeof interval]} AND gic."createdAt" <= ${new Date()}
+      GROUP BY gi.url`) as { count: number; url: string }[];
+      return result;
     }),
 });

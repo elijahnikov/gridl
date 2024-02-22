@@ -250,7 +250,6 @@ const MultipleSelector = React.forwardRef<
 
     const CreatableItem = () => {
       if (!creatable) return undefined;
-      console.log(arrayDefaultOptions);
       if (arrayDefaultOptions.some((item) => item.value === inputValue)) {
         return undefined;
       }

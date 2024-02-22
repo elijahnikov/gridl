@@ -48,8 +48,7 @@ model User {
     sessions Session[]
     grids    Grid[]
 
-    gridItemClicks GridItemClick[]
-    tags           Tag[]
+    tags Tag[]
 }
 
 model VerificationToken {
@@ -76,8 +75,9 @@ model Grid {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    gridItems GridItem[]
-    clicks    GridClick[]
+    gridItems      GridItem[]
+    clicks         GridClick[]
+    gridItemClicks GridItemClick[]
 }
 
 model GridItem {
@@ -134,9 +134,10 @@ model GridClick {
 model GridItemClick {
     id String @id @default(cuid())
 
-    country String?
-    flag    String?
-    city    String?
+    country       String?
+    countryRegion String?
+    flag          String?
+    city          String?
 
     deviceType   String?
     deviceModel  String?
@@ -156,8 +157,8 @@ model GridItemClick {
     gridItemId String
     gridItem   GridItem @relation(fields: [gridItemId], references: [id], onDelete: Cascade)
 
-    userId String
-    user   User   @relation(fields: [userId], references: [id])
+    gridId String
+    grid   Grid   @relation(fields: [gridId], references: [id], onDelete: Cascade)
 }
 
 model Tag {

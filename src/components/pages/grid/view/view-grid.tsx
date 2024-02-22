@@ -1,5 +1,5 @@
 import { type RouterOutputs } from "@/trpc/shared";
-import { memo, useEffect, useMemo, useRef, useState } from "react";
+import React, { memo, useEffect, useMemo, useRef, useState } from "react";
 import { type LayoutType } from "../editor/editor-container";
 import { linksRenderMap } from "@/utils/linksMap";
 import { Responsive, WidthProvider } from "react-grid-layout";
@@ -12,7 +12,10 @@ type ResizeHandle = "s" | "w" | "e" | "n" | "sw" | "nw" | "se" | "ne";
 function ViewGrid({ data }: { data: RouterOutputs["grid"]["gridForViewing"] }) {
   const [parsedLayout, setParsedLayout] = useState<LayoutType[]>([]);
   const initialized = useRef(false);
+
   const { mutate } = api.analytics.createGridAccessClick.useMutation();
+  const { mutate: linkClick } = api.analytics.createGridLinkClick.useMutation();
+
   const layouts = useMemo(() => {
     return {
       lg: parsedLayout.map((obj) => {
@@ -67,6 +70,12 @@ function ViewGrid({ data }: { data: RouterOutputs["grid"]["gridForViewing"] }) {
                 backgroundColor: l.bgColor ?? "none",
                 color: l.textColor ?? "black",
               }}
+              onClick={() =>
+                linkClick({
+                  gridId: data.id,
+                  gridItemId: l.id,
+                })
+              }
               className={cn(
                 l.type === "basicLink" && "shadow-[0px_0px_5px_1px_#00000024]",
                 "flex justify-center rounded-xl",

@@ -3,7 +3,7 @@ import { Card } from "@/lib/ui/card";
 import { Dialog, DialogContent, DialogTrigger } from "@/lib/ui/dialog";
 import { BarList, type Color } from "@tremor/react";
 
-const DATA_LIMIT = 2;
+const DATA_LIMIT = 5;
 
 export default function BaseChart({
   data,
