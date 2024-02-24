@@ -1,7 +1,7 @@
 "use client";
 
 import { api } from "@/trpc/react";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import AnalyticsViewFilter from "./analytics-filter";
 import { useState } from "react";
 import ClicksBarChart from "./charts/bar-chart";
@@ -9,9 +9,8 @@ import LocationChart from "./charts/location-chart";
 import OSChart from "./charts/os-chart";
 import BrowserChart from "./charts/browser-chart";
 import TopLinksChart from "./charts/top-links-chart";
-import { X } from "lucide-react";
-import LoadingSpinner from "@/components/common/loading-spinner";
-import Favicon from "@/components/common/favicon";
+
+import AnalyticsLinkPill from "./link-pill";
 
 export default function AnalyticsContainer() {
   const searchParams = useSearchParams();
@@ -20,7 +19,6 @@ export default function AnalyticsContainer() {
   const [dateRange, setDateRange] = useState<string>("30 days");
   const [chartType, setChartType] = useState<string>("bar");
   const { slug } = useParams() as { slug: string };
-  const router = useRouter();
 
   const {
     data: gridData,
@@ -47,7 +45,7 @@ export default function AnalyticsContainer() {
       dateRange,
     },
     {
-      enabled: true,
+      enabled: Boolean(link),
     },
   );
 
@@ -64,37 +62,13 @@ export default function AnalyticsContainer() {
           chartType={chartType}
           setChartType={setChartType}
         />
-        {link && (
-          <>
-            {linksLoading ? (
-              <div className="mt-9">
-                <LoadingSpinner />
-              </div>
-            ) : (
-              <div className="mt-7 flex h-10 min-w-max items-center rounded-md border bg-white p-1 px-2 text-sm text-slate-700 shadow-sm">
-                <div
-                  onClick={() =>
-                    console.log(router.replace(`/project/${slug}/analytics`))
-                  }
-                  className="mr-2 cursor-pointer rounded-md bg-gray-100 p-[2px] hover:bg-gray-200"
-                >
-                  <X size={14} />
-                </div>
-                {linksData?.[0] ? (
-                  <div className="flex items-center space-x-1">
-                    <div>
-                      {linksData[0].gridItem.url && (
-                        <Favicon size={12} url={linksData[0].gridItem.url} />
-                      )}
-                    </div>
-                    <p>{linksData[0].gridItem.name}</p>
-                  </div>
-                ) : (
-                  <p>{link}</p>
-                )}
-              </div>
-            )}
-          </>
+        {link && linksData?.[0] && (
+          <AnalyticsLinkPill
+            slug={slug}
+            loading={linksLoading}
+            linksData={linksData[0]}
+            link={link}
+          />
         )}
       </div>
       <div className="grid w-full grid-cols-1 gap-5 sm:grid-cols-2">
