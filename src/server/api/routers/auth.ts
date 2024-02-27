@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { createTRPCRouter, publicProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
 import bcrypt from "bcrypt";
 
@@ -51,9 +51,23 @@ export const authRouter = createTRPCRouter({
         },
       });
     }),
-  test: publicProcedure.mutation(async ({ ctx }) => {
-    return {
-      geolocation: ctx.geolocation?.city,
-    };
+  getCurrentUserSettings: protectedProcedure.query(async ({ ctx }) => {
+    const currentUserId = ctx.session.user.id;
+    const user = await ctx.db.user.findFirst({
+      where: {
+        id: currentUserId,
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        image: true,
+        createdAt: true,
+      },
+    });
+    if (!user) {
+      throw new TRPCError({ code: "NOT_FOUND" });
+    }
+    return user;
   }),
 });
